@@ -1,0 +1,191 @@
+{
+  "version": "0.3-spec",
+  "implemented": false,
+  "source_path": "mindcraft/src/agent/library/skills.js",
+  "candidates": [
+    {
+      "action_id": "gather.collect",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "collectBlock",
+          "line": 417
+        },
+        {
+          "name": "pickupNearbyItems",
+          "line": 531
+        }
+      ],
+      "note_zh": "采集返回需统一为真实拾取数量，并加许可区域、工具和取消检查。"
+    },
+    {
+      "action_id": "craft.make",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "craftRecipe",
+          "line": 36
+        }
+      ],
+      "note_zh": "核对num语义与产量换算；材料不足不能自动虚报成功。"
+    },
+    {
+      "action_id": "furnace.smelt",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "smeltItem",
+          "line": 142
+        },
+        {
+          "name": "clearNearestFurnace",
+          "line": 275
+        }
+      ],
+      "note_zh": "最近熔炉选择需改为明确target，限制可取用容器。"
+    },
+    {
+      "action_id": "block.break",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "breakBlockAt",
+          "line": 561
+        }
+      ],
+      "note_zh": "包含cheat模式/setblock路径，评测必须禁用且独立验证。"
+    },
+    {
+      "action_id": "block.place",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "placeBlock",
+          "line": 611
+        }
+      ],
+      "note_zh": "dontCheat默认false；需强制生存路径，并核对朝向和多格状态。"
+    },
+    {
+      "action_id": "inventory.equip",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "equip",
+          "line": 791
+        }
+      ],
+      "note_zh": "包含creative生成物品路径，不能直接作为严格生存评测的可信封装。"
+    },
+    {
+      "action_id": "inventory.transfer",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "putInChest",
+          "line": 869
+        },
+        {
+          "name": "takeFromChest",
+          "line": 898
+        },
+        {
+          "name": "discard",
+          "line": 838
+        }
+      ],
+      "note_zh": "由最近箱子/模糊物品名改为明确目标、数量、组件与许可范围。"
+    },
+    {
+      "action_id": "item.use",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "consume",
+          "line": 973
+        },
+        {
+          "name": "useToolOn",
+          "line": 1982
+        },
+        {
+          "name": "useToolOnBlock",
+          "line": 2044
+        }
+      ],
+      "note_zh": "用工具、吃东西和定点交互语义不同，必须保留具体目标与结果证据。"
+    },
+    {
+      "action_id": "navigation.goto",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "goToPosition",
+          "line": 1181
+        },
+        {
+          "name": "goToGoal",
+          "line": 1070
+        }
+      ],
+      "note_zh": "goToPosition存在cheat/tp路径；正常路径仍需保护约束和到达核验。"
+    },
+    {
+      "action_id": "villager.trade",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "showVillagerTrades",
+          "line": 1748
+        },
+        {
+          "name": "tradeWithVillager",
+          "line": 1789
+        }
+      ],
+      "note_zh": "动态身份/价格/索引匹配，重新核对交易结果。"
+    },
+    {
+      "action_id": "combat.melee",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "attackNearest",
+          "line": 313
+        },
+        {
+          "name": "attackEntity",
+          "line": 334
+        },
+        {
+          "name": "defendSelf",
+          "line": 370
+        }
+      ],
+      "note_zh": "不能直接接入：必须加玩家禁伤和目标新鲜度；attackEntity以离开附近实体列表结束，不足以证明击杀。"
+    },
+    {
+      "action_id": "animal.interact",
+      "reuse_status": "candidate_only_requires_contract_adaptation",
+      "source_path": "mindcraft/src/agent/library/skills.js",
+      "functions": [
+        {
+          "name": "useToolOn",
+          "line": 1982
+        }
+      ],
+      "note_zh": "只能作为部分交互候选，不证明快乐恶魂/犰狳/剪装备已支持。"
+    }
+  ]
+}

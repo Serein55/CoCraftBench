@@ -1,0 +1,32 @@
+{
+  "status": "static_design_checks_passed",
+  "tasks": 100,
+  "original_tasks_preserved": 50,
+  "added_tasks": 50,
+  "baseline_sha256": {
+    "tasks-50.json": "7c6dc0820edb14146540edbbb781864bd315b895f21f85356872601438ba8f03",
+    "blueprints.json": "db1f5ee6a67600b218d26b359867b6caa5cde362bb815f49cea373cab2972041",
+    "任务清单.md": "2782ebe8d753e8188bbb569f7b0dadccaaf4fc7ae1814cc140f9dbea404ca32a",
+    "评测协议.md": "9b14c6abe3d9185dd1a1bc8ccd734abaad27a5071ba11d30c83311ef351fd4ce",
+    "build-design.mjs": "cf1b0b97cefc0d07fc4c8dde75af106e284fa03331b4fea7bcbd054164663a74",
+    "validation.json": "d6b90b833ec63b7ec35a31e12f65ea4354dacff89a64f17673c161af0237e39d"
+  },
+  "checked": [
+    "100 unique continuous IDs",
+    "first 50 task objects deep-equal the original",
+    "all supplied item and enchantment IDs exist in Java 1.21.6 data",
+    "saddle recipe uses 3 leather and 1 iron ingot",
+    "lead recipe uses 5 strings",
+    "happy_ghast exists; ghastling is not a standalone entity ID",
+    "original six design files have unchanged hashes"
+  ],
+  "not_verified": [
+    "game-world feasibility",
+    "all mechanics on the actual target server",
+    "API and packet support for each skill",
+    "runtime event graders",
+    "timing/health/arrow thresholds",
+    "difficulty and budgets",
+    "training or actual Agent improvements"
+  ]
+}

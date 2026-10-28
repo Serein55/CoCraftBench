@@ -1,0 +1,352 @@
+{
+  "date": "2026-10-28",
+  "target_game_version": "1.21.6",
+  "audit_scope": "installed local source including local patches; no runtime capability claims",
+  "versions": {
+    "mineflayer": "4.33.0",
+    "minecraft-data": "3.117.0",
+    "prismarine-item": "1.18.0",
+    "mineflayer-pathfinder": "2.4.5",
+    "mineflayer-collectblock": "1.6.0",
+    "mineflayer-pvp": "1.3.2"
+  },
+  "sources": {
+    "api": {
+      "path": "mindcraft/node_modules/mineflayer/index.d.ts",
+      "sha256": "ea12b6e8800e073d858257c969e5db9a5228ace1b8fe7212ba115a54026a9ede",
+      "anchors": [
+        {
+          "symbol": "blockAt:",
+          "line": 224
+        },
+        {
+          "symbol": "equip:",
+          "line": 301
+        },
+        {
+          "symbol": "activateItem:",
+          "line": 338
+        },
+        {
+          "symbol": "moveVehicle:",
+          "line": 352
+        },
+        {
+          "symbol": "openAnvil:",
+          "line": 377
+        },
+        {
+          "symbol": "export class EnchantmentTable",
+          "line": 733
+        },
+        {
+          "symbol": "entityCriticalEffect:",
+          "line": 93
+        }
+      ]
+    },
+    "itemUse": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/inventory.js",
+      "sha256": "3ce386edc73b9d4be59003d392952ccf457a506263579f4a0757894ae7603c7d",
+      "anchors": [
+        {
+          "symbol": "function activateItem",
+          "line": 114
+        },
+        {
+          "symbol": "function deactivateItem",
+          "line": 141
+        },
+        {
+          "symbol": "async function activateEntity",
+          "line": 244
+        },
+        {
+          "symbol": "async function activateEntityAt",
+          "line": 255
+        }
+      ]
+    },
+    "vehicle": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/entities.js",
+      "sha256": "3a7c34232b43c335a7cad88fffc8ed1fe74fa9a35248a2400d834b9cafbf43ff",
+      "anchors": [
+        {
+          "symbol": "function mount",
+          "line": 854
+        },
+        {
+          "symbol": "function moveVehicle",
+          "line": 859
+        },
+        {
+          "symbol": "function dismount",
+          "line": 881
+        }
+      ]
+    },
+    "controls": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/physics.js",
+      "sha256": "8d88d3c35cdbc8325c0127640f5704af4d622b54902ee7dbfbf472fef5ff162c",
+      "anchors": [
+        {
+          "symbol": "bot.setControlState",
+          "line": 240
+        },
+        {
+          "symbol": "bot.on('mount'",
+          "line": 443
+        }
+      ]
+    },
+    "anvil": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/anvil.js",
+      "sha256": "3cb840aae6b70a70a40e9c41a91be5ac97e84b15da1481b5eba6509862cedffb",
+      "anchors": [
+        {
+          "symbol": "async function combine",
+          "line": 45
+        },
+        {
+          "symbol": "async function rename",
+          "line": 72
+        }
+      ]
+    },
+    "enchant": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/enchantment_table.js",
+      "sha256": "cf23cf6cb5aad875f215f768a86d473894115a55bc65fe813147a6bf10a5dc97",
+      "anchors": [
+        {
+          "symbol": "async function enchant",
+          "line": 74
+        },
+        {
+          "symbol": "async function putTargetItem",
+          "line": 93
+        },
+        {
+          "symbol": "async function putLapis",
+          "line": 97
+        }
+      ]
+    },
+    "fish": {
+      "path": "mindcraft/node_modules/mineflayer/lib/plugins/fishing.js",
+      "sha256": "62dec4a2582826d172349279070700b38344cd1af454405611b47490e88cf06c",
+      "anchors": [
+        {
+          "symbol": "bot._client.on('world_particles'",
+          "line": 24
+        },
+        {
+          "symbol": "async function fish",
+          "line": 48
+        }
+      ]
+    },
+    "item": {
+      "path": "mindcraft/node_modules/prismarine-item/index.js",
+      "sha256": "4706eeea9cba6d1e15953c1b4415d191be42c59ced4f77586cb0529338b09a9b",
+      "anchors": [
+        {
+          "symbol": "this.components = []",
+          "line": 23
+        },
+        {
+          "symbol": "item.components = networkItem.components",
+          "line": 155
+        }
+      ]
+    },
+    "itemTypes": {
+      "path": "mindcraft/node_modules/prismarine-item/index.d.ts",
+      "sha256": "e3953c05f1b24a62e4e58338f84d034e9e1bc7497b227340bf39352686b2aa96",
+      "anchors": [
+        {
+          "symbol": "durabilityUsed:",
+          "line": 19
+        },
+        {
+          "symbol": "get enchants()",
+          "line": 20
+        },
+        {
+          "symbol": "customName:",
+          "line": 27
+        }
+      ]
+    },
+    "pathfinder": {
+      "path": "mindcraft/node_modules/mineflayer-pathfinder/index.d.ts",
+      "sha256": "3cb726aadb9d7c834e47e8306fc1a1aeb5d7e3dd8b200e8bfd36721133911602",
+      "anchors": [
+        {
+          "symbol": "goto(",
+          "line": 42
+        },
+        {
+          "symbol": "stop():",
+          "line": 43
+        },
+        {
+          "symbol": "setMovements(",
+          "line": 41
+        }
+      ]
+    },
+    "collect": {
+      "path": "mindcraft/node_modules/mineflayer-collectblock/lib/CollectBlock.d.ts",
+      "sha256": "0cad048056cf95faf761e88c9590190e8fbadce90ee7b4d7021d8fc7c5009001",
+      "anchors": [
+        {
+          "symbol": "collect(",
+          "line": 88
+        },
+        {
+          "symbol": "cancelTask(",
+          "line": 104
+        }
+      ]
+    },
+    "pvp": {
+      "path": "mindcraft/node_modules/mineflayer-pvp/lib/PVP.d.ts",
+      "sha256": "c1b8053288fb10af1ec67957b8760a856869f68c8b4c24e5770ebe7fef8cfe58",
+      "anchors": [
+        {
+          "symbol": "attack(",
+          "line": 54
+        },
+        {
+          "symbol": "stop(",
+          "line": 58
+        }
+      ]
+    },
+    "windows": {
+      "path": "mindcraft/node_modules/prismarine-windows/index.d.ts",
+      "sha256": "259be5c2417335bb0322e02cd74a116744efa1170ea90436b795372714720aff",
+      "anchors": [
+        {
+          "symbol": "inventoryStart:",
+          "line": 34
+        },
+        {
+          "symbol": "updateSlot(",
+          "line": 177
+        },
+        {
+          "symbol": "items():",
+          "line": 282
+        }
+      ]
+    },
+    "mindcraftSkills": {
+      "path": "mindcraft/src/agent/library/skills.js",
+      "sha256": "e766b5837be4af0ebe392d0730eade5364f94560dfdf7d21fac105b33605c8dc",
+      "anchors": [
+        {
+          "symbol": "collectBlock",
+          "line": 417
+        },
+        {
+          "symbol": "pickupNearbyItems",
+          "line": 531
+        },
+        {
+          "symbol": "craftRecipe",
+          "line": 36
+        },
+        {
+          "symbol": "smeltItem",
+          "line": 142
+        },
+        {
+          "symbol": "clearNearestFurnace",
+          "line": 275
+        },
+        {
+          "symbol": "breakBlockAt",
+          "line": 561
+        },
+        {
+          "symbol": "placeBlock",
+          "line": 611
+        },
+        {
+          "symbol": "equip",
+          "line": 791
+        },
+        {
+          "symbol": "putInChest",
+          "line": 869
+        },
+        {
+          "symbol": "takeFromChest",
+          "line": 898
+        },
+        {
+          "symbol": "discard",
+          "line": 838
+        },
+        {
+          "symbol": "consume",
+          "line": 973
+        },
+        {
+          "symbol": "useToolOn",
+          "line": 1982
+        },
+        {
+          "symbol": "useToolOnBlock",
+          "line": 2044
+        },
+        {
+          "symbol": "goToPosition",
+          "line": 1181
+        },
+        {
+          "symbol": "goToGoal",
+          "line": 1070
+        },
+        {
+          "symbol": "showVillagerTrades",
+          "line": 1748
+        },
+        {
+          "symbol": "tradeWithVillager",
+          "line": 1789
+        },
+        {
+          "symbol": "attackNearest",
+          "line": 313
+        },
+        {
+          "symbol": "attackEntity",
+          "line": 334
+        },
+        {
+          "symbol": "defendSelf",
+          "line": 370
+        },
+        {
+          "symbol": "useToolOn",
+          "line": 1982
+        }
+      ]
+    }
+  },
+  "constraints": [
+    "No game or API calls",
+    "No Agent source or settings edits",
+    "No implementation of wrappers, grader, runner, world pack"
+  ],
+  "special_findings": [
+    "moveVehicle exposes only left/forward; no verified happy-ghast 3D controller",
+    "dismount newPlayerInputPacket branch sends jump:true; must preflight",
+    "activateItem supports offhand, targeted activateBlock/activateEntity interactions use main hand",
+    "fish already detects bobber particles and reels in; result collection still separate",
+    "entityCriticalEffect exists but is not sufficient proof of attributed valid critical damage",
+    "item JS exposes components/componentMap though d.ts is incomplete"
+  ]
+}

@@ -1,0 +1,1873 @@
+{
+  "version": "0.3-spec",
+  "capability_count": 140,
+  "groups": [
+    {
+      "id": "resource",
+      "capabilities": [
+        "gather",
+        "tool_selection",
+        "item_collection",
+        "reward_collection",
+        "resource_planning",
+        "durability_budget"
+      ],
+      "actions": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    {
+      "id": "crafting",
+      "capabilities": [
+        "craft",
+        "recipe_versioning",
+        "workstation_selection"
+      ],
+      "actions": [
+        "craft.make",
+        "observe.snapshot"
+      ],
+      "note_zh": "配方按1.21.6解析；制箭台不是合成GUI。"
+    },
+    {
+      "id": "placement",
+      "capabilities": [
+        "place",
+        "placement_order",
+        "structure_activation"
+      ],
+      "actions": [
+        "block.place",
+        "verify.local"
+      ],
+      "note_zh": "多格结构、方向和触发顺序需明确验收；不允许直接写世界。"
+    },
+    {
+      "id": "blueprint",
+      "capabilities": [
+        "blueprint"
+      ],
+      "actions": [
+        "build.blueprint",
+        "block.place",
+        "block.break",
+        "verify.local"
+      ],
+      "note_zh": "蓝图构建/修复需逐格核验。"
+    },
+    {
+      "id": "verification",
+      "capabilities": [
+        "verify",
+        "constraint"
+      ],
+      "actions": [
+        "verify.local",
+        "observe.snapshot"
+      ],
+      "note_zh": "核验只能读取Agent可见局部状态；保护规则由工具层强制执行。"
+    },
+    {
+      "id": "carving",
+      "capabilities": [
+        "carve_pumpkin"
+      ],
+      "actions": [
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "雕刻南瓜用剪刀交互，随后结构摆放另计。"
+    },
+    {
+      "id": "processing",
+      "capabilities": [
+        "smelt"
+      ],
+      "actions": [
+        "furnace.smelt"
+      ],
+      "note_zh": "等真实加工完成后取出。"
+    },
+    {
+      "id": "brewing",
+      "capabilities": [
+        "brew"
+      ],
+      "actions": [
+        "brewing.brew"
+      ],
+      "note_zh": "通用窗口需要独立槽位适配。"
+    },
+    {
+      "id": "containers",
+      "capabilities": [
+        "chest",
+        "inventory_ui",
+        "window_slots"
+      ],
+      "actions": [
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "窗口租约和数量转移核验；窗口槽位能力不等于所有工作站都需要调用。"
+    },
+    {
+      "id": "equipment",
+      "capabilities": [
+        "equip",
+        "hotbar_switch",
+        "offhand"
+      ],
+      "actions": [
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "切换装备与实际物品使用分开。"
+    },
+    {
+      "id": "item_inspection",
+      "capabilities": [
+        "inspect_enchantments",
+        "inspect_durability",
+        "inspect_components"
+      ],
+      "actions": [
+        "observe.snapshot"
+      ],
+      "note_zh": "附魔/耐久/带电弩组件需解码；unknown不同于空值。"
+    },
+    {
+      "id": "generic_interaction",
+      "capabilities": [
+        "use_item",
+        "timed_item_use",
+        "held_item_duration",
+        "bucket",
+        "composter",
+        "waterlogging",
+        "source_water",
+        "kelp",
+        "waxing",
+        "axe_scrape",
+        "block_state_transition",
+        "campfire_cooking",
+        "respawn_anchor"
+      ],
+      "actions": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    {
+      "id": "agriculture",
+      "capabilities": [
+        "farm",
+        "automatic_farm"
+      ],
+      "actions": [
+        "block.break",
+        "block.place",
+        "item.use",
+        "world.wait_until",
+        "gather.collect"
+      ],
+      "note_zh": "观察成熟阶段，保留/补种根部，不加速自然生长。"
+    },
+    {
+      "id": "observation",
+      "capabilities": [
+        "entity_tracking",
+        "world_state",
+        "block_identification",
+        "inspect_map",
+        "inspect_player_state",
+        "identity_tracking",
+        "status_effects",
+        "provenance_tracking",
+        "combat_telemetry",
+        "projectile_feedback",
+        "projectile_tracking",
+        "entity_age",
+        "entity_lifecycle"
+      ],
+      "actions": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    {
+      "id": "navigation",
+      "capabilities": [
+        "navigation",
+        "swimming",
+        "air_management",
+        "door_air_pocket_java",
+        "equipment_mechanics",
+        "sneaking",
+        "vibration_knowledge",
+        "wool_occlusion",
+        "dimension_knowledge"
+      ],
+      "actions": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    {
+      "id": "portal",
+      "capabilities": [
+        "portal"
+      ],
+      "actions": [
+        "world.portal",
+        "navigation.goto"
+      ],
+      "note_zh": "维度切换清除旧会话对象并重新定位。"
+    },
+    {
+      "id": "animal",
+      "capabilities": [
+        "animal_luring",
+        "feed_snowballs",
+        "harness_equip",
+        "saddle_equip",
+        "shear_equipment",
+        "brush_entity",
+        "pet_owner_check",
+        "animal_equipment"
+      ],
+      "actions": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    {
+      "id": "leash",
+      "capabilities": [
+        "leash_graph",
+        "sneak_interact",
+        "animal_transport",
+        "shear_leash",
+        "boat_loading",
+        "cargo_unloading"
+      ],
+      "actions": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    {
+      "id": "vehicle",
+      "capabilities": [
+        "vehicle",
+        "boat_mount_control",
+        "vehicle_dismount",
+        "horse_control",
+        "mount_seat_selection",
+        "flight_control",
+        "safe_dismount"
+      ],
+      "actions": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    {
+      "id": "trading",
+      "capabilities": [
+        "trade",
+        "villager_job_site"
+      ],
+      "actions": [
+        "villager.trade",
+        "villager.manage_job",
+        "observe.snapshot"
+      ],
+      "note_zh": "动态交易列表、锁职业与目标UUID；不假定预设贸易是普通世界规则。"
+    },
+    {
+      "id": "enchanting",
+      "capabilities": [
+        "enchant"
+      ],
+      "actions": [
+        "enchanting.enchant",
+        "observe.snapshot"
+      ],
+      "note_zh": "等级、原始组件与结果必须核验，不把随机附魔说成确定获得。"
+    },
+    {
+      "id": "anvil",
+      "capabilities": [
+        "anvil"
+      ],
+      "actions": [
+        "anvil.process",
+        "observe.snapshot"
+      ],
+      "note_zh": "铁砧与附魔台为不同接口。"
+    },
+    {
+      "id": "experience",
+      "capabilities": [
+        "xp_management"
+      ],
+      "actions": [
+        "observe.snapshot"
+      ],
+      "note_zh": "规划XP与读取当前等级，不凭此自动添加附魔台/铁砧操作。"
+    },
+    {
+      "id": "special_windows",
+      "capabilities": [
+        "grindstone",
+        "cartography",
+        "stonecutter",
+        "smithing",
+        "crafter",
+        "slot_enable_disable"
+      ],
+      "actions": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    {
+      "id": "ranged",
+      "capabilities": [
+        "bow_charge_release",
+        "aim_ballistics",
+        "aim_leading",
+        "crossbow_load"
+      ],
+      "actions": [
+        "combat.shoot",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "蓄力/装填/射击分阶段，局部闭环控制弹道与提前量。"
+    },
+    {
+      "id": "shield",
+      "capabilities": [
+        "shield_raise_lower",
+        "face_threat",
+        "reactive_control"
+      ],
+      "actions": [
+        "combat.shield",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "面向威胁并处理起盾时机；格挡次数为grader权威信号。"
+    },
+    {
+      "id": "melee",
+      "capabilities": [
+        "mob_combat",
+        "melee_cooldown",
+        "attack_timing",
+        "jump_fall_timing",
+        "mace_smash",
+        "timed_attack",
+        "mob_specific_tactics",
+        "combat_resource_management"
+      ],
+      "actions": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    {
+      "id": "falling",
+      "capabilities": [
+        "fall_prediction",
+        "wind_charge_movement"
+      ],
+      "actions": [
+        "movement.clutch",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "水桶/风弹需要物理刻闭环；不是LLM逐刻选按键。"
+    },
+    {
+      "id": "parry",
+      "capabilities": [
+        "projectile_parry"
+      ],
+      "actions": [
+        "combat.parry",
+        "observe.snapshot"
+      ],
+      "note_zh": "只反击白名单可反射弹射物，并验证反射伤害归属。"
+    },
+    {
+      "id": "redstone",
+      "capabilities": [
+        "redstone",
+        "redstone_feedback",
+        "hopper_orientation",
+        "container_network",
+        "redstone_logic",
+        "piston_orientation",
+        "observer"
+      ],
+      "actions": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    {
+      "id": "archaeology",
+      "capabilities": [
+        "archaeology"
+      ],
+      "actions": [
+        "world.archaeology",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "持续刷扫和掉落来源都需要实机预验。"
+    },
+    {
+      "id": "trials",
+      "capabilities": [
+        "trial_spawner",
+        "vault",
+        "ominous_trials"
+      ],
+      "actions": [
+        "trial.interact",
+        "combat.melee",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "完整试炼完成与随机奖励/宝库身份判定由grader记录。"
+    },
+    {
+      "id": "growth",
+      "capabilities": [
+        "long_wait_monitoring"
+      ],
+      "actions": [
+        "world.wait_until",
+        "plan.checkpoint",
+        "observe.snapshot"
+      ],
+      "note_zh": "记录真实被动等待，不超出任务wall预算。"
+    },
+    {
+      "id": "barter",
+      "capabilities": [
+        "barter",
+        "mob_identification"
+      ],
+      "actions": [
+        "item.use",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "成年猪灵识别与金锭交互/投放、回报拾取和来源核验。"
+    },
+    {
+      "id": "bundle",
+      "capabilities": [
+        "bundle_components",
+        "capacity_reasoning"
+      ],
+      "actions": [
+        "inventory.bundle",
+        "observe.snapshot"
+      ],
+      "note_zh": "独立容量计算与现代物品组件适配。"
+    },
+    {
+      "id": "fishing",
+      "capabilities": [
+        "fishing_bobber",
+        "bite_detection"
+      ],
+      "actions": [
+        "world.fish",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "复用原生fish检测，但仍核验实际渔获。"
+    },
+    {
+      "id": "healing",
+      "capabilities": [
+        "healing_management"
+      ],
+      "actions": [
+        "item.use",
+        "world.wait_until",
+        "observe.snapshot"
+      ],
+      "note_zh": "食物/血量/效果和冷却按当前状态决策。"
+    },
+    {
+      "id": "planning",
+      "capabilities": [
+        "planning",
+        "persistent_memory",
+        "recovery",
+        "dialogue",
+        "replanning",
+        "persistent_planning"
+      ],
+      "actions": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    }
+  ],
+  "capabilities": {
+    "gather": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "tool_selection": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "item_collection": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "reward_collection": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "resource_planning": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "durability_budget": {
+      "group": "resource",
+      "action_ids": [
+        "gather.collect",
+        "block.break",
+        "inventory.equip",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "采集与拾取分开计数，工具/附魔/耐久是前置条件。"
+    },
+    "craft": {
+      "group": "crafting",
+      "action_ids": [
+        "craft.make",
+        "observe.snapshot"
+      ],
+      "note_zh": "配方按1.21.6解析；制箭台不是合成GUI。"
+    },
+    "recipe_versioning": {
+      "group": "crafting",
+      "action_ids": [
+        "craft.make",
+        "observe.snapshot"
+      ],
+      "note_zh": "配方按1.21.6解析；制箭台不是合成GUI。"
+    },
+    "workstation_selection": {
+      "group": "crafting",
+      "action_ids": [
+        "craft.make",
+        "observe.snapshot"
+      ],
+      "note_zh": "配方按1.21.6解析；制箭台不是合成GUI。"
+    },
+    "place": {
+      "group": "placement",
+      "action_ids": [
+        "block.place",
+        "verify.local"
+      ],
+      "note_zh": "多格结构、方向和触发顺序需明确验收；不允许直接写世界。"
+    },
+    "placement_order": {
+      "group": "placement",
+      "action_ids": [
+        "block.place",
+        "verify.local"
+      ],
+      "note_zh": "多格结构、方向和触发顺序需明确验收；不允许直接写世界。"
+    },
+    "structure_activation": {
+      "group": "placement",
+      "action_ids": [
+        "block.place",
+        "verify.local"
+      ],
+      "note_zh": "多格结构、方向和触发顺序需明确验收；不允许直接写世界。"
+    },
+    "blueprint": {
+      "group": "blueprint",
+      "action_ids": [
+        "build.blueprint",
+        "block.place",
+        "block.break",
+        "verify.local"
+      ],
+      "note_zh": "蓝图构建/修复需逐格核验。"
+    },
+    "verify": {
+      "group": "verification",
+      "action_ids": [
+        "verify.local",
+        "observe.snapshot"
+      ],
+      "note_zh": "核验只能读取Agent可见局部状态；保护规则由工具层强制执行。"
+    },
+    "constraint": {
+      "group": "verification",
+      "action_ids": [
+        "verify.local",
+        "observe.snapshot"
+      ],
+      "note_zh": "核验只能读取Agent可见局部状态；保护规则由工具层强制执行。"
+    },
+    "carve_pumpkin": {
+      "group": "carving",
+      "action_ids": [
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "雕刻南瓜用剪刀交互，随后结构摆放另计。"
+    },
+    "smelt": {
+      "group": "processing",
+      "action_ids": [
+        "furnace.smelt"
+      ],
+      "note_zh": "等真实加工完成后取出。"
+    },
+    "brew": {
+      "group": "brewing",
+      "action_ids": [
+        "brewing.brew"
+      ],
+      "note_zh": "通用窗口需要独立槽位适配。"
+    },
+    "chest": {
+      "group": "containers",
+      "action_ids": [
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "窗口租约和数量转移核验；窗口槽位能力不等于所有工作站都需要调用。"
+    },
+    "inventory_ui": {
+      "group": "containers",
+      "action_ids": [
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "窗口租约和数量转移核验；窗口槽位能力不等于所有工作站都需要调用。"
+    },
+    "window_slots": {
+      "group": "containers",
+      "action_ids": [
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "窗口租约和数量转移核验；窗口槽位能力不等于所有工作站都需要调用。"
+    },
+    "equip": {
+      "group": "equipment",
+      "action_ids": [
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "切换装备与实际物品使用分开。"
+    },
+    "hotbar_switch": {
+      "group": "equipment",
+      "action_ids": [
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "切换装备与实际物品使用分开。"
+    },
+    "offhand": {
+      "group": "equipment",
+      "action_ids": [
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "切换装备与实际物品使用分开。"
+    },
+    "inspect_enchantments": {
+      "group": "item_inspection",
+      "action_ids": [
+        "observe.snapshot"
+      ],
+      "note_zh": "附魔/耐久/带电弩组件需解码；unknown不同于空值。"
+    },
+    "inspect_durability": {
+      "group": "item_inspection",
+      "action_ids": [
+        "observe.snapshot"
+      ],
+      "note_zh": "附魔/耐久/带电弩组件需解码；unknown不同于空值。"
+    },
+    "inspect_components": {
+      "group": "item_inspection",
+      "action_ids": [
+        "observe.snapshot"
+      ],
+      "note_zh": "附魔/耐久/带电弩组件需解码；unknown不同于空值。"
+    },
+    "use_item": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "timed_item_use": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "held_item_duration": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "bucket": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "composter": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "waterlogging": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "source_water": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "kelp": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "waxing": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "axe_scrape": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "block_state_transition": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "campfire_cooking": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "respawn_anchor": {
+      "group": "generic_interaction",
+      "action_ids": [
+        "item.use",
+        "block.place",
+        "world.wait_until",
+        "verify.local"
+      ],
+      "note_zh": "区分空气/方块/实体目标、主副手和使用时长；营火无熔炉GUI。"
+    },
+    "farm": {
+      "group": "agriculture",
+      "action_ids": [
+        "block.break",
+        "block.place",
+        "item.use",
+        "world.wait_until",
+        "gather.collect"
+      ],
+      "note_zh": "观察成熟阶段，保留/补种根部，不加速自然生长。"
+    },
+    "automatic_farm": {
+      "group": "agriculture",
+      "action_ids": [
+        "block.break",
+        "block.place",
+        "item.use",
+        "world.wait_until",
+        "gather.collect"
+      ],
+      "note_zh": "观察成熟阶段，保留/补种根部，不加速自然生长。"
+    },
+    "entity_tracking": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "world_state": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "block_identification": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "inspect_map": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "inspect_player_state": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "identity_tracking": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "status_effects": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "provenance_tracking": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "combat_telemetry": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "projectile_feedback": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "projectile_tracking": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "entity_age": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "entity_lifecycle": {
+      "group": "observation",
+      "action_ids": [
+        "observe.snapshot",
+        "verify.local"
+      ],
+      "note_zh": "客户端可见快照是局部证据；归因、完整来源链和精确战斗强度由服务器grader补充。"
+    },
+    "navigation": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "swimming": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "air_management": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "door_air_pocket_java": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "equipment_mechanics": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "sneaking": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "vibration_knowledge": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "wool_occlusion": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "dimension_knowledge": {
+      "group": "navigation",
+      "action_ids": [
+        "navigation.goto",
+        "navigation.control",
+        "inventory.equip",
+        "item.use",
+        "observe.snapshot"
+      ],
+      "note_zh": "行为知识由Agent/控制器负责；感知不额外泄露触发区域。"
+    },
+    "portal": {
+      "group": "portal",
+      "action_ids": [
+        "world.portal",
+        "navigation.goto"
+      ],
+      "note_zh": "维度切换清除旧会话对象并重新定位。"
+    },
+    "animal_luring": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "feed_snowballs": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "harness_equip": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "saddle_equip": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "shear_equipment": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "brush_entity": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "pet_owner_check": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "animal_equipment": {
+      "group": "animal",
+      "action_ids": [
+        "animal.interact",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "按动物与交互模式分支，不从通用右键推断全部玩法已支持。"
+    },
+    "leash_graph": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "sneak_interact": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "animal_transport": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "shear_leash": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "boat_loading": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "cargo_unloading": {
+      "group": "leash",
+      "action_ids": [
+        "animal.leash",
+        "animal.interact",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "拴绳图、船乘客和载货关系须版本实机验证。"
+    },
+    "vehicle": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "boat_mount_control": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "vehicle_dismount": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "horse_control": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "mount_seat_selection": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "flight_control": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "safe_dismount": {
+      "group": "vehicle",
+      "action_ids": [
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "observe.snapshot"
+      ],
+      "note_zh": "快乐恶魂三维输入与安全下乘存在明确工具缺口。"
+    },
+    "trade": {
+      "group": "trading",
+      "action_ids": [
+        "villager.trade",
+        "villager.manage_job",
+        "observe.snapshot"
+      ],
+      "note_zh": "动态交易列表、锁职业与目标UUID；不假定预设贸易是普通世界规则。"
+    },
+    "villager_job_site": {
+      "group": "trading",
+      "action_ids": [
+        "villager.trade",
+        "villager.manage_job",
+        "observe.snapshot"
+      ],
+      "note_zh": "动态交易列表、锁职业与目标UUID；不假定预设贸易是普通世界规则。"
+    },
+    "enchant": {
+      "group": "enchanting",
+      "action_ids": [
+        "enchanting.enchant",
+        "observe.snapshot"
+      ],
+      "note_zh": "等级、原始组件与结果必须核验，不把随机附魔说成确定获得。"
+    },
+    "anvil": {
+      "group": "anvil",
+      "action_ids": [
+        "anvil.process",
+        "observe.snapshot"
+      ],
+      "note_zh": "铁砧与附魔台为不同接口。"
+    },
+    "xp_management": {
+      "group": "experience",
+      "action_ids": [
+        "observe.snapshot"
+      ],
+      "note_zh": "规划XP与读取当前等级，不凭此自动添加附魔台/铁砧操作。"
+    },
+    "grindstone": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "cartography": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "stonecutter": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "smithing": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "crafter": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "slot_enable_disable": {
+      "group": "special_windows",
+      "action_ids": [
+        "workstation.process",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "每个窗口独立预验，不能硬编码所有工作站共用槽位。"
+    },
+    "bow_charge_release": {
+      "group": "ranged",
+      "action_ids": [
+        "combat.shoot",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "蓄力/装填/射击分阶段，局部闭环控制弹道与提前量。"
+    },
+    "aim_ballistics": {
+      "group": "ranged",
+      "action_ids": [
+        "combat.shoot",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "蓄力/装填/射击分阶段，局部闭环控制弹道与提前量。"
+    },
+    "aim_leading": {
+      "group": "ranged",
+      "action_ids": [
+        "combat.shoot",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "蓄力/装填/射击分阶段，局部闭环控制弹道与提前量。"
+    },
+    "crossbow_load": {
+      "group": "ranged",
+      "action_ids": [
+        "combat.shoot",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "蓄力/装填/射击分阶段，局部闭环控制弹道与提前量。"
+    },
+    "shield_raise_lower": {
+      "group": "shield",
+      "action_ids": [
+        "combat.shield",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "面向威胁并处理起盾时机；格挡次数为grader权威信号。"
+    },
+    "face_threat": {
+      "group": "shield",
+      "action_ids": [
+        "combat.shield",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "面向威胁并处理起盾时机；格挡次数为grader权威信号。"
+    },
+    "reactive_control": {
+      "group": "shield",
+      "action_ids": [
+        "combat.shield",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "面向威胁并处理起盾时机；格挡次数为grader权威信号。"
+    },
+    "mob_combat": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "melee_cooldown": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "attack_timing": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "jump_fall_timing": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "mace_smash": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "timed_attack": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "mob_specific_tactics": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "combat_resource_management": {
+      "group": "melee",
+      "action_ids": [
+        "combat.melee",
+        "navigation.control",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "共享禁止伤害玩家规则；冷却/暴击/重锤不能仅凭attack包判断。"
+    },
+    "fall_prediction": {
+      "group": "falling",
+      "action_ids": [
+        "movement.clutch",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "水桶/风弹需要物理刻闭环；不是LLM逐刻选按键。"
+    },
+    "wind_charge_movement": {
+      "group": "falling",
+      "action_ids": [
+        "movement.clutch",
+        "navigation.control",
+        "observe.snapshot"
+      ],
+      "note_zh": "水桶/风弹需要物理刻闭环；不是LLM逐刻选按键。"
+    },
+    "projectile_parry": {
+      "group": "parry",
+      "action_ids": [
+        "combat.parry",
+        "observe.snapshot"
+      ],
+      "note_zh": "只反击白名单可反射弹射物，并验证反射伤害归属。"
+    },
+    "redstone": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "redstone_feedback": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "hopper_orientation": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "container_network": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "redstone_logic": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "piston_orientation": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "observer": {
+      "group": "redstone",
+      "action_ids": [
+        "world.redstone",
+        "block.place",
+        "inventory.transfer",
+        "verify.local"
+      ],
+      "note_zh": "构造方向和状态反馈，物流用真实漏斗，不能手搬冒充。"
+    },
+    "archaeology": {
+      "group": "archaeology",
+      "action_ids": [
+        "world.archaeology",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "持续刷扫和掉落来源都需要实机预验。"
+    },
+    "trial_spawner": {
+      "group": "trials",
+      "action_ids": [
+        "trial.interact",
+        "combat.melee",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "完整试炼完成与随机奖励/宝库身份判定由grader记录。"
+    },
+    "vault": {
+      "group": "trials",
+      "action_ids": [
+        "trial.interact",
+        "combat.melee",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "完整试炼完成与随机奖励/宝库身份判定由grader记录。"
+    },
+    "ominous_trials": {
+      "group": "trials",
+      "action_ids": [
+        "trial.interact",
+        "combat.melee",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "完整试炼完成与随机奖励/宝库身份判定由grader记录。"
+    },
+    "long_wait_monitoring": {
+      "group": "growth",
+      "action_ids": [
+        "world.wait_until",
+        "plan.checkpoint",
+        "observe.snapshot"
+      ],
+      "note_zh": "记录真实被动等待，不超出任务wall预算。"
+    },
+    "barter": {
+      "group": "barter",
+      "action_ids": [
+        "item.use",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "成年猪灵识别与金锭交互/投放、回报拾取和来源核验。"
+    },
+    "mob_identification": {
+      "group": "barter",
+      "action_ids": [
+        "item.use",
+        "inventory.transfer",
+        "observe.snapshot"
+      ],
+      "note_zh": "成年猪灵识别与金锭交互/投放、回报拾取和来源核验。"
+    },
+    "bundle_components": {
+      "group": "bundle",
+      "action_ids": [
+        "inventory.bundle",
+        "observe.snapshot"
+      ],
+      "note_zh": "独立容量计算与现代物品组件适配。"
+    },
+    "capacity_reasoning": {
+      "group": "bundle",
+      "action_ids": [
+        "inventory.bundle",
+        "observe.snapshot"
+      ],
+      "note_zh": "独立容量计算与现代物品组件适配。"
+    },
+    "fishing_bobber": {
+      "group": "fishing",
+      "action_ids": [
+        "world.fish",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "复用原生fish检测，但仍核验实际渔获。"
+    },
+    "bite_detection": {
+      "group": "fishing",
+      "action_ids": [
+        "world.fish",
+        "inventory.equip",
+        "observe.snapshot"
+      ],
+      "note_zh": "复用原生fish检测，但仍核验实际渔获。"
+    },
+    "healing_management": {
+      "group": "healing",
+      "action_ids": [
+        "item.use",
+        "world.wait_until",
+        "observe.snapshot"
+      ],
+      "note_zh": "食物/血量/效果和冷却按当前状态决策。"
+    },
+    "planning": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    },
+    "persistent_memory": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    },
+    "recovery": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    },
+    "dialogue": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    },
+    "replanning": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    },
+    "persistent_planning": {
+      "group": "planning",
+      "action_ids": [
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "action.status",
+        "action.cancel",
+        "npc.say"
+      ],
+      "note_zh": "Mineflayer不提供长期规划与跨重启任务记忆，需Agent服务。"
+    }
+  }
+}

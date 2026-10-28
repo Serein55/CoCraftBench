@@ -1,0 +1,2534 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MC-NPC proposed action request v0.3",
+  "type": "object",
+  "properties": {
+    "protocol_version": {
+      "const": "0.3-spec"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "deadline_ms": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "max_ticks": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string",
+      "enum": [
+        "observe.snapshot",
+        "navigation.goto",
+        "navigation.control",
+        "gather.collect",
+        "block.break",
+        "block.place",
+        "inventory.equip",
+        "inventory.transfer",
+        "inventory.bundle",
+        "item.use",
+        "craft.make",
+        "furnace.smelt",
+        "brewing.brew",
+        "workstation.process",
+        "villager.trade",
+        "villager.manage_job",
+        "enchanting.enchant",
+        "anvil.process",
+        "combat.melee",
+        "combat.shoot",
+        "combat.shield",
+        "combat.parry",
+        "movement.clutch",
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "animal.interact",
+        "animal.leash",
+        "world.portal",
+        "world.redstone",
+        "world.archaeology",
+        "trial.interact",
+        "world.wait_until",
+        "world.fish",
+        "build.blueprint",
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "verify.local",
+        "npc.say",
+        "action.status",
+        "action.cancel"
+      ]
+    },
+    "arguments": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "episode_id",
+    "session_id",
+    "action_id",
+    "plan_id",
+    "plan_revision",
+    "deadline_ms",
+    "max_ticks",
+    "name",
+    "arguments"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "position": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "dimension",
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "blockPosition": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "z": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dimension",
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "blockRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "block"
+        },
+        "position": {
+          "$ref": "#/definitions/blockPosition"
+        },
+        "expected_name": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "expected_name"
+      ],
+      "additionalProperties": false
+    },
+    "entityRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "entity"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uuid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "expected_name": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "observed_tick": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "session_id",
+        "entity_id",
+        "uuid",
+        "expected_name",
+        "observed_tick"
+      ],
+      "additionalProperties": false
+    },
+    "slotRef": {
+      "type": "object",
+      "properties": {
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "slot": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "expected_fingerprint": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "inventory_revision",
+        "slot",
+        "expected_item",
+        "expected_fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "target": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/blockRef"
+        },
+        {
+          "$ref": "#/definitions/entityRef"
+        }
+      ]
+    },
+    "itemCount": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "item",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "inventory_at_least",
+            "block_state",
+            "position_near",
+            "dimension_is",
+            "entity_state",
+            "blueprint_matches",
+            "event_observed"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {},
+        "max_age_ticks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "subject",
+        "expected",
+        "max_age_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "checkpoint": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "phase_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "completed_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "resource_ledger": {
+          "type": "object"
+        },
+        "world_landmarks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/position"
+          }
+        },
+        "pending_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "plan_id",
+        "revision",
+        "phase_id",
+        "goal",
+        "completed_steps",
+        "next_steps",
+        "resource_ledger",
+        "world_landmarks",
+        "pending_action_ids"
+      ],
+      "additionalProperties": false
+    },
+    "args_observe.snapshot": {
+      "type": "object",
+      "properties": {
+        "radius": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "self",
+              "inventory",
+              "blocks",
+              "entities",
+              "window",
+              "effects"
+            ]
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "radius",
+        "include"
+      ],
+      "additionalProperties": false
+    },
+    "args_navigation.goto": {
+      "type": "object",
+      "properties": {
+        "destination": {
+          "$ref": "#/definitions/position"
+        },
+        "tolerance": {
+          "type": "number",
+          "minimum": 0
+        },
+        "allow_break": {
+          "type": "boolean"
+        },
+        "allow_place": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "destination",
+        "tolerance",
+        "allow_break",
+        "allow_place"
+      ],
+      "additionalProperties": false
+    },
+    "args_navigation.control": {
+      "type": "object",
+      "properties": {
+        "controls": {
+          "type": "object",
+          "properties": {
+            "forward": {
+              "type": "boolean"
+            },
+            "back": {
+              "type": "boolean"
+            },
+            "left": {
+              "type": "boolean"
+            },
+            "right": {
+              "type": "boolean"
+            },
+            "jump": {
+              "type": "boolean"
+            },
+            "sprint": {
+              "type": "boolean"
+            },
+            "sneak": {
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "look_at": {
+          "$ref": "#/definitions/position"
+        },
+        "duration_ticks": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "controls",
+        "duration_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "args_gather.collect": {
+      "type": "object",
+      "properties": {
+        "block_names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "minItems": 1
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "region_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tool_policy": {
+          "type": "string",
+          "enum": [
+            "best_valid",
+            "silk_touch_required",
+            "preserve_target"
+          ]
+        }
+      },
+      "required": [
+        "block_names",
+        "quantity",
+        "region_id",
+        "tool_policy"
+      ],
+      "additionalProperties": false
+    },
+    "args_block.break": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "required_tool": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "args_block.place": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "destination": {
+          "$ref": "#/definitions/position"
+        },
+        "support": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "face": {
+          "type": "string",
+          "enum": [
+            "up",
+            "down",
+            "north",
+            "south",
+            "east",
+            "west"
+          ]
+        },
+        "properties": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "item",
+        "destination",
+        "support",
+        "face",
+        "properties"
+      ],
+      "additionalProperties": false
+    },
+    "args_inventory.equip": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "destination": {
+          "type": "string",
+          "enum": [
+            "hand",
+            "off-hand",
+            "head",
+            "torso",
+            "legs",
+            "feet"
+          ]
+        },
+        "source": {
+          "$ref": "#/definitions/slotRef"
+        }
+      },
+      "required": [
+        "item",
+        "destination"
+      ],
+      "additionalProperties": false
+    },
+    "args_inventory.transfer": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": [
+            "deposit",
+            "withdraw",
+            "rearrange",
+            "drop"
+          ]
+        },
+        "target": {
+          "$ref": "#/definitions/target"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "minItems": 1
+        },
+        "destination_slot": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "direction",
+        "items"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "direction": {
+                "enum": [
+                  "deposit",
+                  "withdraw"
+                ]
+              }
+            },
+            "required": [
+              "direction"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {}
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "direction": {
+                "enum": [
+                  "rearrange"
+                ]
+              }
+            },
+            "required": [
+              "direction"
+            ]
+          },
+          "then": {
+            "required": [
+              "destination_slot"
+            ],
+            "properties": {}
+          }
+        }
+      ]
+    },
+    "args_inventory.bundle": {
+      "type": "object",
+      "properties": {
+        "bundle_slot": {
+          "$ref": "#/definitions/slotRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "insert",
+            "extract"
+          ]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "bundle_slot",
+        "operation",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "args_item.use": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "hand": {
+          "type": "string",
+          "enum": [
+            "main",
+            "off"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "air",
+            "block",
+            "entity",
+            "consume"
+          ]
+        },
+        "target": {
+          "$ref": "#/definitions/target"
+        },
+        "hold_ticks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sneak": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item",
+        "hand",
+        "mode",
+        "hold_ticks",
+        "sneak"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "block"
+                ]
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/definitions/blockRef"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "enum": [
+                  "entity"
+                ]
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "target"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/definitions/entityRef"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "args_craft.make": {
+      "type": "object",
+      "properties": {
+        "output": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "output_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "crafting_table": {
+          "$ref": "#/definitions/blockRef"
+        }
+      },
+      "required": [
+        "output",
+        "output_count"
+      ],
+      "additionalProperties": false
+    },
+    "args_furnace.smelt": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "input": {
+          "$ref": "#/definitions/itemCount"
+        },
+        "fuel": {
+          "$ref": "#/definitions/itemCount"
+        },
+        "expected_output": {
+          "$ref": "#/definitions/itemCount"
+        }
+      },
+      "required": [
+        "target",
+        "input",
+        "fuel",
+        "expected_output"
+      ],
+      "additionalProperties": false
+    },
+    "args_brewing.brew": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "recipe_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bottles": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "target",
+        "recipe_id",
+        "bottles"
+      ],
+      "additionalProperties": false
+    },
+    "args_workstation.process": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "workstation": {
+          "type": "string",
+          "enum": [
+            "grindstone",
+            "cartography_table",
+            "stonecutter",
+            "smithing_table",
+            "crafter"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "remove_noncurse_enchantments",
+            "scale_map",
+            "lock_map",
+            "select_recipe",
+            "upgrade",
+            "configure_crafter"
+          ]
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "minItems": 1
+        },
+        "recipe_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "enabled_slots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 8
+          }
+        }
+      },
+      "required": [
+        "target",
+        "workstation",
+        "operation",
+        "inputs"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "workstation": {
+                "enum": [
+                  "grindstone"
+                ]
+              }
+            },
+            "required": [
+              "workstation"
+            ]
+          },
+          "then": {
+            "required": [],
+            "properties": {
+              "operation": {
+                "const": "remove_noncurse_enchantments"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "workstation": {
+                "enum": [
+                  "cartography_table"
+                ]
+              }
+            },
+            "required": [
+              "workstation"
+            ]
+          },
+          "then": {
+            "required": [],
+            "properties": {
+              "operation": {
+                "enum": [
+                  "scale_map",
+                  "lock_map"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "workstation": {
+                "enum": [
+                  "stonecutter"
+                ]
+              }
+            },
+            "required": [
+              "workstation"
+            ]
+          },
+          "then": {
+            "required": [
+              "recipe_id"
+            ],
+            "properties": {
+              "operation": {
+                "const": "select_recipe"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "workstation": {
+                "enum": [
+                  "smithing_table"
+                ]
+              }
+            },
+            "required": [
+              "workstation"
+            ]
+          },
+          "then": {
+            "required": [],
+            "properties": {
+              "operation": {
+                "const": "upgrade"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "workstation": {
+                "enum": [
+                  "crafter"
+                ]
+              }
+            },
+            "required": [
+              "workstation"
+            ]
+          },
+          "then": {
+            "required": [
+              "enabled_slots"
+            ],
+            "properties": {
+              "operation": {
+                "const": "configure_crafter"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "args_villager.trade": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "input": {
+          "$ref": "#/definitions/itemCount"
+        },
+        "output": {
+          "$ref": "#/definitions/itemCount"
+        },
+        "executions": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "target",
+        "input",
+        "output",
+        "executions"
+      ],
+      "additionalProperties": false
+    },
+    "args_villager.manage_job": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "workstation": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "assign",
+            "remove_job_site",
+            "verify_locked_profession"
+          ]
+        }
+      },
+      "required": [
+        "target",
+        "workstation",
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "args_enchanting.enchant": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "item_slot": {
+          "$ref": "#/definitions/slotRef"
+        },
+        "choice_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "minimum_offer_level": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "target",
+        "item_slot",
+        "choice_index",
+        "minimum_offer_level"
+      ],
+      "additionalProperties": false
+    },
+    "args_anvil.process": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "first": {
+          "$ref": "#/definitions/slotRef"
+        },
+        "second": {
+          "$ref": "#/definitions/slotRef"
+        },
+        "rename": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "target",
+        "first"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "second"
+          ]
+        },
+        {
+          "required": [
+            "rename"
+          ]
+        }
+      ]
+    },
+    "args_combat.melee": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "technique": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "cooldown",
+            "critical",
+            "mace_smash"
+          ]
+        },
+        "max_attacks": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "target",
+        "technique",
+        "max_attacks"
+      ],
+      "additionalProperties": false
+    },
+    "args_combat.shoot": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/target"
+        },
+        "weapon": {
+          "type": "string",
+          "enum": [
+            "minecraft:bow",
+            "minecraft:crossbow"
+          ]
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "load",
+            "fire",
+            "load_and_fire"
+          ]
+        },
+        "max_shots": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "minimum_charge_ticks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "target",
+        "weapon",
+        "phase",
+        "max_shots",
+        "minimum_charge_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "args_combat.shield": {
+      "type": "object",
+      "properties": {
+        "threat": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "duration_ticks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_damage": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "threat",
+        "duration_ticks",
+        "max_damage"
+      ],
+      "additionalProperties": false
+    },
+    "args_combat.parry": {
+      "type": "object",
+      "properties": {
+        "projectile": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "projectile",
+        "max_attempts"
+      ],
+      "additionalProperties": false
+    },
+    "args_movement.clutch": {
+      "type": "object",
+      "properties": {
+        "technique": {
+          "type": "string",
+          "enum": [
+            "water_bucket",
+            "wind_charge"
+          ]
+        },
+        "landing": {
+          "$ref": "#/definitions/position"
+        },
+        "recover_water": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "technique",
+        "landing",
+        "recover_water"
+      ],
+      "additionalProperties": false
+    },
+    "args_vehicle.mount": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "seat": {
+          "type": "string",
+          "enum": [
+            "driver",
+            "passenger"
+          ]
+        }
+      },
+      "required": [
+        "target",
+        "seat"
+      ],
+      "additionalProperties": false
+    },
+    "args_vehicle.drive": {
+      "type": "object",
+      "properties": {
+        "vehicle": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "waypoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/position"
+          },
+          "minItems": 1
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "boat",
+            "minecart",
+            "horse",
+            "happy_ghast"
+          ]
+        }
+      },
+      "required": [
+        "vehicle",
+        "waypoints",
+        "mode"
+      ],
+      "additionalProperties": false
+    },
+    "args_vehicle.dismount": {
+      "type": "object",
+      "properties": {
+        "landing_zone": {
+          "$ref": "#/definitions/position"
+        },
+        "maximum_fall_blocks": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "landing_zone",
+        "maximum_fall_blocks"
+      ],
+      "additionalProperties": false
+    },
+    "args_animal.interact": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "lure",
+            "breed",
+            "shear_wool",
+            "feed_snowball",
+            "equip_harness",
+            "equip_saddle",
+            "shear_equipment",
+            "brush",
+            "equip_wolf_armor",
+            "inspect_age"
+          ]
+        },
+        "held_item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "sneak": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "target",
+        "operation",
+        "held_item",
+        "sneak"
+      ],
+      "additionalProperties": false
+    },
+    "args_animal.leash": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "holder": {
+          "$ref": "#/definitions/entityRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "attach",
+            "chain",
+            "detach_with_shears",
+            "load_boat",
+            "unload_cargo"
+          ]
+        }
+      },
+      "required": [
+        "source",
+        "operation"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "chain"
+                ]
+              }
+            },
+            "required": [
+              "operation"
+            ]
+          },
+          "then": {
+            "required": [
+              "holder"
+            ],
+            "properties": {}
+          }
+        }
+      ]
+    },
+    "args_world.portal": {
+      "type": "object",
+      "properties": {
+        "portal_anchor": {
+          "$ref": "#/definitions/position"
+        },
+        "destination_dimension": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "ignite",
+            "enter"
+          ]
+        }
+      },
+      "required": [
+        "portal_anchor",
+        "destination_dimension",
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "args_world.redstone": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "toggle",
+            "pulse",
+            "observe"
+          ]
+        },
+        "pulses": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "expected": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/condition"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "input",
+        "operation",
+        "expected"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "enum": [
+                  "pulse"
+                ]
+              }
+            },
+            "required": [
+              "operation"
+            ]
+          },
+          "then": {
+            "required": [
+              "pulses"
+            ],
+            "properties": {}
+          }
+        }
+      ]
+    },
+    "args_world.archaeology": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "max_ticks": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "target",
+        "max_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "args_trial.interact": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/blockRef"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "observe_spawner",
+            "use_trial_key",
+            "use_ominous_key",
+            "drink_ominous_bottle"
+          ]
+        }
+      },
+      "required": [
+        "target",
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "args_world.wait_until": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "$ref": "#/definitions/condition"
+        },
+        "check_interval_ticks": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximum_ticks": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "condition",
+        "check_interval_ticks",
+        "maximum_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "args_world.fish": {
+      "type": "object",
+      "properties": {
+        "max_casts": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "desired_fish_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "max_casts",
+        "desired_fish_count"
+      ],
+      "additionalProperties": false
+    },
+    "args_build.blueprint": {
+      "type": "object",
+      "properties": {
+        "blueprint_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "$ref": "#/definitions/position"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "build_missing",
+            "inspect",
+            "repair_mismatch"
+          ]
+        }
+      },
+      "required": [
+        "blueprint_id",
+        "origin",
+        "revision",
+        "operation"
+      ],
+      "additionalProperties": false
+    },
+    "args_plan.checkpoint": {
+      "type": "object",
+      "properties": {
+        "checkpoint": {
+          "$ref": "#/definitions/checkpoint"
+        }
+      },
+      "required": [
+        "checkpoint"
+      ],
+      "additionalProperties": false
+    },
+    "args_plan.resume": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "plan_id",
+        "expected_revision"
+      ],
+      "additionalProperties": false
+    },
+    "args_plan.revise": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "new_goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cancel_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "plan_id",
+        "expected_revision",
+        "new_goal",
+        "cancel_action_ids"
+      ],
+      "additionalProperties": false
+    },
+    "args_verify.local": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/condition"
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "conditions"
+      ],
+      "additionalProperties": false
+    },
+    "args_npc.say": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "progress",
+            "question",
+            "completion",
+            "failure"
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "purpose"
+      ],
+      "additionalProperties": false
+    },
+    "args_action.status": {
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "additionalProperties": false
+    },
+    "args_action.cancel": {
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "action_id",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "observe.snapshot"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_observe.snapshot"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "navigation.goto"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_navigation.goto"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "navigation.control"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_navigation.control"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "gather.collect"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_gather.collect"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "block.break"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_block.break"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "block.place"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_block.place"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "inventory.equip"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_inventory.equip"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "inventory.transfer"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_inventory.transfer"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "inventory.bundle"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_inventory.bundle"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "item.use"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_item.use"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "craft.make"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_craft.make"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "furnace.smelt"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_furnace.smelt"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "brewing.brew"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_brewing.brew"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "workstation.process"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_workstation.process"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "villager.trade"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_villager.trade"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "villager.manage_job"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_villager.manage_job"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "enchanting.enchant"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_enchanting.enchant"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "anvil.process"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_anvil.process"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "combat.melee"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_combat.melee"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "combat.shoot"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_combat.shoot"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "combat.shield"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_combat.shield"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "combat.parry"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_combat.parry"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "movement.clutch"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_movement.clutch"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "vehicle.mount"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_vehicle.mount"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "vehicle.drive"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_vehicle.drive"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "vehicle.dismount"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_vehicle.dismount"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "animal.interact"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_animal.interact"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "animal.leash"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_animal.leash"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "world.portal"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_world.portal"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "world.redstone"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_world.redstone"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "world.archaeology"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_world.archaeology"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "trial.interact"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_trial.interact"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "world.wait_until"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_world.wait_until"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "world.fish"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_world.fish"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "build.blueprint"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_build.blueprint"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "plan.checkpoint"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_plan.checkpoint"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "plan.resume"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_plan.resume"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "plan.revise"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_plan.revise"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "verify.local"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_verify.local"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "npc.say"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_npc.say"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "action.status"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_action.status"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "action.cancel"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "then": {
+        "properties": {
+          "arguments": {
+            "$ref": "#/definitions/args_action.cancel"
+          }
+        }
+      }
+    }
+  ]
+}

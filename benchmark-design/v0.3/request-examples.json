@@ -1,0 +1,52 @@
+[
+  {
+    "protocol_version": "0.3-spec",
+    "episode_id": "mc61-A-run01",
+    "session_id": "session-001",
+    "action_id": "action-001",
+    "plan_id": "archery-01",
+    "plan_revision": 0,
+    "deadline_ms": 15000,
+    "max_ticks": 200,
+    "name": "combat.shoot",
+    "arguments": {
+      "target": {
+        "kind": "block",
+        "position": {
+          "dimension": "minecraft:overworld",
+          "x": 16,
+          "y": 65,
+          "z": 0
+        },
+        "expected_name": "minecraft:target"
+      },
+      "weapon": "minecraft:bow",
+      "phase": "load_and_fire",
+      "max_shots": 1,
+      "minimum_charge_ticks": 20
+    }
+  },
+  {
+    "protocol_version": "0.3-spec",
+    "episode_id": "mc64-A-run01",
+    "session_id": "session-002",
+    "action_id": "action-002",
+    "plan_id": "shield-01",
+    "plan_revision": 0,
+    "deadline_ms": 10000,
+    "max_ticks": 120,
+    "name": "combat.shield",
+    "arguments": {
+      "threat": {
+        "kind": "entity",
+        "session_id": "session-002",
+        "entity_id": 37,
+        "uuid": "00000000-0000-4000-8000-000000000037",
+        "expected_name": "minecraft:skeleton",
+        "observed_tick": 230
+      },
+      "duration_ticks": 80,
+      "max_damage": 4
+    }
+  }
+]

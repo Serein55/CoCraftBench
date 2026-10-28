@@ -1,0 +1,72 @@
+{
+  "status": "static_design_checks_passed",
+  "tasks": 50,
+  "levels": [
+    {
+      "level": 1,
+      "count": 10
+    },
+    {
+      "level": 2,
+      "count": 10
+    },
+    {
+      "level": 3,
+      "count": 10
+    },
+    {
+      "level": 4,
+      "count": 10
+    },
+    {
+      "level": 5,
+      "count": 10
+    }
+  ],
+  "game_data_version": "1.21.6",
+  "checked": [
+    "unique task IDs",
+    "50 tasks, 10 per tier",
+    "declared item/block IDs",
+    "blueprint references",
+    "iron armor recipe totals 24 ingots",
+    "wooden house has 92 planks and 4 glass blocks",
+    "grass milestone weights sum to 1"
+  ],
+  "not_checked": [
+    "world feasibility",
+    "loot and breeding event instrumentation",
+    "exact interaction API coverage",
+    "time and call budget calibration",
+    "world-level success graders"
+  ],
+  "predicate_kinds": [
+    "agent_built_portal",
+    "block_at_marker",
+    "blocks_at_markers",
+    "blueprint_match",
+    "container_at_least",
+    "crafted_output_at_least",
+    "designated_entities_inside",
+    "effective_bookshelves",
+    "enchanted_inventory_item",
+    "equipped",
+    "event_count",
+    "ever_owned_silk_touch_source",
+    "ever_owned_tool_tier",
+    "ever_owned_usable_silk_touch_tool",
+    "functional_bed_at_marker",
+    "gate_closed",
+    "inventory_at_least",
+    "near_anchor",
+    "no_damage_to_species",
+    "offspring_alive",
+    "post_restart_progress",
+    "potion_container",
+    "potion_inventory",
+    "protected_region_unchanged",
+    "rail_corridor",
+    "walkable_path",
+    "water_region_unchanged"
+  ]
+}

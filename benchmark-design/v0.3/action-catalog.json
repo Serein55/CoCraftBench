@@ -1,0 +1,2398 @@
+{
+  "version": "0.3-spec",
+  "status": "Specification only; all wrappers unimplemented",
+  "definitions": {
+    "position": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "dimension",
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "blockPosition": {
+      "type": "object",
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "z": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dimension",
+        "x",
+        "y",
+        "z"
+      ],
+      "additionalProperties": false
+    },
+    "blockRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "block"
+        },
+        "position": {
+          "$ref": "#/definitions/blockPosition"
+        },
+        "expected_name": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        }
+      },
+      "required": [
+        "kind",
+        "position",
+        "expected_name"
+      ],
+      "additionalProperties": false
+    },
+    "entityRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "entity"
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uuid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "expected_name": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "observed_tick": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "session_id",
+        "entity_id",
+        "uuid",
+        "expected_name",
+        "observed_tick"
+      ],
+      "additionalProperties": false
+    },
+    "slotRef": {
+      "type": "object",
+      "properties": {
+        "inventory_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "slot": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expected_item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "expected_fingerprint": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "inventory_revision",
+        "slot",
+        "expected_item",
+        "expected_fingerprint"
+      ],
+      "additionalProperties": false
+    },
+    "target": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/blockRef"
+        },
+        {
+          "$ref": "#/definitions/entityRef"
+        }
+      ]
+    },
+    "itemCount": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string",
+          "pattern": "^minecraft:[a-z0-9_]+$"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "item",
+        "count"
+      ],
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "inventory_at_least",
+            "block_state",
+            "position_near",
+            "dimension_is",
+            "entity_state",
+            "blueprint_matches",
+            "event_observed"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {},
+        "max_age_ticks": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "subject",
+        "expected",
+        "max_age_ticks"
+      ],
+      "additionalProperties": false
+    },
+    "checkpoint": {
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "phase_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "completed_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "resource_ledger": {
+          "type": "object"
+        },
+        "world_landmarks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/position"
+          }
+        },
+        "pending_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "plan_id",
+        "revision",
+        "phase_id",
+        "goal",
+        "completed_steps",
+        "next_steps",
+        "resource_ledger",
+        "world_landmarks",
+        "pending_action_ids"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "actions": [
+    {
+      "name": "observe.snapshot",
+      "label_zh": "读取可见状态",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.blockAt",
+        "bot.findBlocks",
+        "bot.entities",
+        "bot.inventory",
+        "bot.health",
+        "bot.food",
+        "bot.oxygenLevel",
+        "bot.experience",
+        "bot.game",
+        "Item.enchants",
+        "Item.components"
+      ],
+      "source_ids": [
+        "api",
+        "item",
+        "itemTypes"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "radius": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "include": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "self",
+                "inventory",
+                "blocks",
+                "entities",
+                "window",
+                "effects"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "radius",
+          "include"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "只返回公开给Agent的感知半径内、已加载数据。未加载和未解码字段返回unknown；禁止查询评测隐藏区域、全世界容器和服务器完整状态。"
+    },
+    {
+      "name": "navigation.goto",
+      "label_zh": "到达位置",
+      "layer": "plugin_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.pathfinder.goto",
+        "bot.pathfinder.setMovements",
+        "bot.pathfinder.stop"
+      ],
+      "source_ids": [
+        "pathfinder"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "destination": {
+            "$ref": "#/definitions/position"
+          },
+          "tolerance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "allow_break": {
+            "type": "boolean"
+          },
+          "allow_place": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "destination",
+          "tolerance",
+          "allow_break",
+          "allow_place"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "Movements必须套用保护区域、禁止破坏物、掉落风险和材料限制；默认不得私自挖穿建筑。到达容差后核验，pathfinder无路线返回NO_PATH。"
+    },
+    {
+      "name": "navigation.control",
+      "label_zh": "短时移动与朝向",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.setControlState",
+        "bot.clearControlStates",
+        "bot.lookAt",
+        "bot.waitForTicks"
+      ],
+      "source_ids": [
+        "api",
+        "controls"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "controls": {
+            "type": "object",
+            "properties": {
+              "forward": {
+                "type": "boolean"
+              },
+              "back": {
+                "type": "boolean"
+              },
+              "left": {
+                "type": "boolean"
+              },
+              "right": {
+                "type": "boolean"
+              },
+              "jump": {
+                "type": "boolean"
+              },
+              "sprint": {
+                "type": "boolean"
+              },
+              "sneak": {
+                "type": "boolean"
+              }
+            },
+            "required": [],
+            "additionalProperties": false
+          },
+          "look_at": {
+            "$ref": "#/definitions/position"
+          },
+          "duration_ticks": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "controls",
+          "duration_ticks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "限时控制；按物理刻运行，自动释放。水下、粉雪、潜行、坠落控制分别预验。LLM不逐刻调用。"
+    },
+    {
+      "name": "gather.collect",
+      "label_zh": "采集指定资源",
+      "layer": "plugin_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.collectBlock.collect",
+        "bot.collectBlock.cancelTask",
+        "bot.dig",
+        "bot.pathfinder.goto"
+      ],
+      "source_ids": [
+        "collect",
+        "api",
+        "pathfinder"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "block_names": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^minecraft:[a-z0-9_]+$"
+            },
+            "minItems": 1
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "region_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tool_policy": {
+            "type": "string",
+            "enum": [
+              "best_valid",
+              "silk_touch_required",
+              "preserve_target"
+            ]
+          }
+        },
+        "required": [
+          "block_names",
+          "quantity",
+          "region_id",
+          "tool_policy"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "区分挖掘数与实际拾取数，region必须是公开许可区域。背包满不得任意扔工具或存进未授权箱子。草方块须先查有效精准采集工具；原木累计采集来源由grader核实。"
+    },
+    {
+      "name": "block.break",
+      "label_zh": "破坏单个方块",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.dig",
+        "bot.stopDigging",
+        "bot.digTime",
+        "bot.equip"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "required_tool": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "重新读取方块和工具；保护检查后挖掘，完成后验证方块变化；dig完成不等于产物已拾取。"
+    },
+    {
+      "name": "block.place",
+      "label_zh": "按朝向放置方块",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.placeBlock",
+        "bot.placeEntity",
+        "bot.lookAt",
+        "bot.setControlState"
+      ],
+      "source_ids": [
+        "api",
+        "controls"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "destination": {
+            "$ref": "#/definitions/position"
+          },
+          "support": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "face": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "north",
+              "south",
+              "east",
+              "west"
+            ]
+          },
+          "properties": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "item",
+          "destination",
+          "support",
+          "face",
+          "properties"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "destination为整数格坐标；必须从相邻support+face解析，禁止把绝对目标坐标直接当placeBlock参数。原生placeBlock不保证朝向/含水/床双格等状态；放置后读回properties。"
+    },
+    {
+      "name": "inventory.equip",
+      "label_zh": "装备物品",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.equip",
+        "bot.unequip",
+        "bot.setQuickBarSlot"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "destination": {
+            "type": "string",
+            "enum": [
+              "hand",
+              "off-hand",
+              "head",
+              "torso",
+              "legs",
+              "feet"
+            ]
+          },
+          "source": {
+            "$ref": "#/definitions/slotRef"
+          }
+        },
+        "required": [
+          "item",
+          "destination"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "读取实际槽位物品组件与耐久；卸装作为单独操作策略，不以装备成功代替盾牌举起。"
+    },
+    {
+      "name": "inventory.transfer",
+      "label_zh": "背包与容器转移",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openContainer",
+        "bot.transfer",
+        "bot.clickWindow",
+        "bot.putAway",
+        "Chest.deposit",
+        "Chest.withdraw",
+        "bot.toss"
+      ],
+      "source_ids": [
+        "api",
+        "windows"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdraw",
+              "rearrange",
+              "drop"
+            ]
+          },
+          "target": {
+            "$ref": "#/definitions/target"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/itemCount"
+            },
+            "minItems": 1
+          },
+          "destination_slot": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "direction",
+          "items"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "direction": {
+                  "enum": [
+                    "deposit",
+                    "withdraw"
+                  ]
+                }
+              },
+              "required": [
+                "direction"
+              ]
+            },
+            "then": {
+              "required": [
+                "target"
+              ],
+              "properties": {}
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "direction": {
+                  "enum": [
+                    "rearrange"
+                  ]
+                }
+              },
+              "required": [
+                "direction"
+              ]
+            },
+            "then": {
+              "required": [
+                "destination_slot"
+              ],
+              "properties": {}
+            }
+          }
+        ]
+      },
+      "contract_zh": "容器操作须有新鲜目标和独占窗口租约；rearrange需目标槽，drop需许可丢弃区域。逐次校验cursor与前后数量，不将移入箱子的物品再算最终背包持有。"
+    },
+    {
+      "name": "inventory.bundle",
+      "label_zh": "收纳袋操作",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.clickWindow",
+        "Item.components",
+        "Item.componentMap"
+      ],
+      "source_ids": [
+        "api",
+        "item",
+        "windows"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "bundle_slot": {
+            "$ref": "#/definitions/slotRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "insert",
+              "extract"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/itemCount"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "bundle_slot",
+          "operation",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "需1.21.6收纳袋窗口动作预验及bundle_contents解码；按堆叠权重计算容量。不能把bundle当普通箱子或仅修改本地组件。"
+    },
+    {
+      "name": "item.use",
+      "label_zh": "使用手中物品",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateItem",
+        "bot.deactivateItem",
+        "bot.activateBlock",
+        "bot.activateEntity",
+        "bot.activateEntityAt",
+        "bot.consume"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "hand": {
+            "type": "string",
+            "enum": [
+              "main",
+              "off"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "air",
+              "block",
+              "entity",
+              "consume"
+            ]
+          },
+          "target": {
+            "$ref": "#/definitions/target"
+          },
+          "hold_ticks": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sneak": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item",
+          "hand",
+          "mode",
+          "hold_ticks",
+          "sneak"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "block"
+                  ]
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "$ref": "#/definitions/blockRef"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "entity"
+                  ]
+                }
+              },
+              "required": [
+                "mode"
+              ]
+            },
+            "then": {
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "$ref": "#/definitions/entityRef"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "contract_zh": "block/entity模式强制对应target。activateItem(true)可用副手，但activateBlock/activateEntity内部交互主手，副手定点交互未验证时返回UNSUPPORTED；禁止静默换手。雪球喂食须对实体交互，不能向幼体发射。"
+    },
+    {
+      "name": "craft.make",
+      "label_zh": "按版本配方制作",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.recipesFor",
+        "bot.craft"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "output": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "output_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "crafting_table": {
+            "$ref": "#/definitions/blockRef"
+          }
+        },
+        "required": [
+          "output",
+          "output_count"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "output_count是目标产物数；bot.craft的count是配方执行次数，须按每次产量换算并记录实际消耗/产出。区分2x2和工作台3x3，不对制箭台调用造箭GUI。材料不足交回规划器补齐。"
+    },
+    {
+      "name": "furnace.smelt",
+      "label_zh": "熔炉处理",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openFurnace",
+        "Furnace.putInput",
+        "Furnace.putFuel",
+        "Furnace.takeOutput"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "input": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "fuel": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "expected_output": {
+            "$ref": "#/definitions/itemCount"
+          }
+        },
+        "required": [
+          "target",
+          "input",
+          "fuel",
+          "expected_output"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "确认容器类型、燃料与配方；耗时期间监测燃料/输出/背包，取出后验数量，支持可恢复进度。"
+    },
+    {
+      "name": "brewing.brew",
+      "label_zh": "酿造流程",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openBlock",
+        "bot.transfer",
+        "bot.clickWindow"
+      ],
+      "source_ids": [
+        "api",
+        "windows"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "recipe_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "bottles": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "target",
+          "recipe_id",
+          "bottles"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "没有专用openBrewingStand接口的核实证据；须版本化GUI槽位与酿造状态适配。区分药水类型、延长时长和实际瓶数，失败不得虚报完成。"
+    },
+    {
+      "name": "workstation.process",
+      "label_zh": "特殊工作站操作",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openBlock",
+        "bot.clickWindow",
+        "bot.transfer",
+        "bot.activateBlock"
+      ],
+      "source_ids": [
+        "api",
+        "windows"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "workstation": {
+            "type": "string",
+            "enum": [
+              "grindstone",
+              "cartography_table",
+              "stonecutter",
+              "smithing_table",
+              "crafter"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "remove_noncurse_enchantments",
+              "scale_map",
+              "lock_map",
+              "select_recipe",
+              "upgrade",
+              "configure_crafter"
+            ]
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/itemCount"
+            },
+            "minItems": 1
+          },
+          "recipe_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "enabled_slots": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 8
+            }
+          }
+        },
+        "required": [
+          "target",
+          "workstation",
+          "operation",
+          "inputs"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "workstation": {
+                  "enum": [
+                    "grindstone"
+                  ]
+                }
+              },
+              "required": [
+                "workstation"
+              ]
+            },
+            "then": {
+              "required": [],
+              "properties": {
+                "operation": {
+                  "const": "remove_noncurse_enchantments"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "workstation": {
+                  "enum": [
+                    "cartography_table"
+                  ]
+                }
+              },
+              "required": [
+                "workstation"
+              ]
+            },
+            "then": {
+              "required": [],
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "scale_map",
+                    "lock_map"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "workstation": {
+                  "enum": [
+                    "stonecutter"
+                  ]
+                }
+              },
+              "required": [
+                "workstation"
+              ]
+            },
+            "then": {
+              "required": [
+                "recipe_id"
+              ],
+              "properties": {
+                "operation": {
+                  "const": "select_recipe"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "workstation": {
+                  "enum": [
+                    "smithing_table"
+                  ]
+                }
+              },
+              "required": [
+                "workstation"
+              ]
+            },
+            "then": {
+              "required": [],
+              "properties": {
+                "operation": {
+                  "const": "upgrade"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "workstation": {
+                  "enum": [
+                    "crafter"
+                  ]
+                }
+              },
+              "required": [
+                "workstation"
+              ]
+            },
+            "then": {
+              "required": [
+                "enabled_slots"
+              ],
+              "properties": {
+                "operation": {
+                  "const": "configure_crafter"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "contract_zh": "逐种工作站定义合法operation、窗口类型、状态ID与槽位表；GUI识别失败立即停止。石切机选择配方、合成器禁用槽位不能假设clickWindow足够；缺少已验证公共API时报告UNSUPPORTED，不向LLM开放原始包。"
+    },
+    {
+      "name": "villager.trade",
+      "label_zh": "检查并执行交易",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openVillager",
+        "Villager.trades",
+        "bot.trade"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "input": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "output": {
+            "$ref": "#/definitions/itemCount"
+          },
+          "executions": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "target",
+          "input",
+          "output",
+          "executions"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "从最新trades按物品组件/价格匹配动态tradeIndex，检验第二输入、库存、折扣和输出；不固定交易索引，不假定所有村民有评测地图指定交易。"
+    },
+    {
+      "name": "villager.manage_job",
+      "label_zh": "村民职业与工作站",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.placeBlock",
+        "bot.dig",
+        "bot.entities",
+        "bot.openVillager"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "workstation": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "assign",
+              "remove_job_site",
+              "verify_locked_profession"
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "workstation",
+          "operation"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "摆放工作站不是职业成功证明；确认村民身份、工作时段和目标变化，已交易村民不可作为随意洗职业对象。未知职业元数据保留unknown。"
+    },
+    {
+      "name": "enchanting.enchant",
+      "label_zh": "附魔台操作",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openEnchantmentTable",
+        "EnchantmentTable.putTargetItem",
+        "EnchantmentTable.putLapis",
+        "EnchantmentTable.enchant",
+        "EnchantmentTable.takeTargetItem"
+      ],
+      "source_ids": [
+        "api",
+        "enchant"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "item_slot": {
+            "$ref": "#/definitions/slotRef"
+          },
+          "choice_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2
+          },
+          "minimum_offer_level": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "target",
+          "item_slot",
+          "choice_index",
+          "minimum_offer_level"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "等候选就绪后校验offer、青金石和等级；槽位索引与显示等级不同。30级选项不等于消耗30级，也不保证精准采集。取出工具检查实际附魔。"
+    },
+    {
+      "name": "anvil.process",
+      "label_zh": "铁砧修理附魔重命名",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.openAnvil",
+        "Anvil.combine",
+        "Anvil.rename",
+        "Item.anvil"
+      ],
+      "source_ids": [
+        "api",
+        "anvil"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "first": {
+            "$ref": "#/definitions/slotRef"
+          },
+          "second": {
+            "$ref": "#/definitions/slotRef"
+          },
+          "rename": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "target",
+          "first"
+        ],
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "second"
+            ]
+          },
+          {
+            "required": [
+              "rename"
+            ]
+          }
+        ]
+      },
+      "contract_zh": "有second调用combine，否则rename必填并调用rename；预算以工具先前惩罚、有效附魔兼容与实际XP为准。结果核对耐久、附魔、自定义名称。"
+    },
+    {
+      "name": "combat.melee",
+      "label_zh": "计时近战",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.attack",
+        "bot.lookAt",
+        "bot.setControlState",
+        "bot.entity.attributes",
+        "bot.pvp.attack",
+        "bot.pvp.stop"
+      ],
+      "source_ids": [
+        "api",
+        "controls",
+        "pvp"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "technique": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "cooldown",
+              "critical",
+              "mace_smash"
+            ]
+          },
+          "max_attacks": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "target",
+          "technique",
+          "max_attacks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "所有打击执行前重新排除玩家和禁止目标。pvp插件仅是候选普通近战实现，不证明1.21.6暴击/重锤正确。冷却强度估计、下落状态和攻击距离需控制器；精确判分需服务器证据。"
+    },
+    {
+      "name": "combat.shoot",
+      "label_zh": "弓弩射击",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.lookAt",
+        "bot.activateItem",
+        "bot.deactivateItem",
+        "bot.setQuickBarSlot",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse",
+        "item"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/target"
+          },
+          "weapon": {
+            "type": "string",
+            "enum": [
+              "minecraft:bow",
+              "minecraft:crossbow"
+            ]
+          },
+          "phase": {
+            "type": "string",
+            "enum": [
+              "load",
+              "fire",
+              "load_and_fire"
+            ]
+          },
+          "max_shots": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minimum_charge_ticks": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "target",
+          "weapon",
+          "phase",
+          "max_shots",
+          "minimum_charge_ticks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "本地按物理刻完成蓄力、释放、提前量和弹道；弩load必须保留装填状态供切槽验证。检查charged_projectiles等组件可读性；发送use_item不是射击命中证明。"
+    },
+    {
+      "name": "combat.shield",
+      "label_zh": "定向举盾",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.equip",
+        "bot.activateItem(true)",
+        "bot.deactivateItem",
+        "bot.lookAt"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "threat": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "duration_ticks": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "max_damage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "threat",
+          "duration_ticks",
+          "max_damage"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "副手装备后持用并面向威胁，考虑起盾延迟和禁用；健康未减不能独自证明格挡，服务器记录正面弹射物格挡次数。退出释放持用状态。"
+    },
+    {
+      "name": "combat.parry",
+      "label_zh": "弹射物反击",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.attack",
+        "bot.entities",
+        "bot.lookAt"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "projectile": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "max_attempts": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "projectile",
+          "max_attempts"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "仅对白名单可反击弹射物进行定时攻击；检查射线前方无玩家，拒绝泛化为攻击任意实体。恶魂死亡和Tears唱片必须另查反射来源链。"
+    },
+    {
+      "name": "movement.clutch",
+      "label_zh": "坠落与风弹控制",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.entity",
+        "bot.activateBlock",
+        "bot.activateItem",
+        "bot.setControlState",
+        "bot.lookAt"
+      ],
+      "source_ids": [
+        "api",
+        "controls",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "technique": {
+            "type": "string",
+            "enum": [
+              "water_bucket",
+              "wind_charge"
+            ]
+          },
+          "landing": {
+            "$ref": "#/definitions/position"
+          },
+          "recover_water": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "technique",
+          "landing",
+          "recover_water"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "高频预测落点、在合法交互范围使用；不得依赖LLM网络往返逐刻救援。风弹起跳和重锤落击是不同操作，成功各自观察验证。"
+    },
+    {
+      "name": "vehicle.mount",
+      "label_zh": "选择并乘坐载具",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.mount",
+        "bot.activateEntity",
+        "bot.activateEntityAt",
+        "bot.vehicle"
+      ],
+      "source_ids": [
+        "api",
+        "vehicle"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "seat": {
+            "type": "string",
+            "enum": [
+              "driver",
+              "passenger"
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "seat"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "确认目标、许可、乘客与座位；不能从发出mount就认定取得驾驶位。多座位快乐恶魂须预验。"
+    },
+    {
+      "name": "vehicle.drive",
+      "label_zh": "驾驶路径",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.moveVehicle",
+        "bot.lookAt",
+        "bot.setControlState"
+      ],
+      "source_ids": [
+        "api",
+        "vehicle",
+        "controls"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "vehicle": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "waypoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/position"
+            },
+            "minItems": 1
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "boat",
+              "minecart",
+              "horse",
+              "happy_ghast"
+            ]
+          }
+        },
+        "required": [
+          "vehicle",
+          "waypoints",
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "按载具分别实现；moveVehicle只提供left/forward。轨道运输也不等于自由驾驶。快乐恶魂上下/制动/座位与同步输入无已验证实现，预验前必须UNSUPPORTED，不伪造flyHappyGhast原生API。"
+    },
+    {
+      "name": "vehicle.dismount",
+      "label_zh": "安全下乘",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.dismount",
+        "bot.vehicle",
+        "bot.setControlState"
+      ],
+      "source_ids": [
+        "api",
+        "vehicle",
+        "controls"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "landing_zone": {
+            "$ref": "#/definitions/position"
+          },
+          "maximum_fall_blocks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "landing_zone",
+          "maximum_fall_blocks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "核验落脚点和高度，再退出并等实际乘客关系解除。当前newPlayerInputPacket分支dismount发送jump:true，必须专门核验1.21.6语义，不能推定已可用。"
+    },
+    {
+      "name": "animal.interact",
+      "label_zh": "动物喂食装备与刷取",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateEntity",
+        "bot.activateEntityAt",
+        "bot.equip",
+        "bot.setControlState",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "lure",
+              "breed",
+              "shear_wool",
+              "feed_snowball",
+              "equip_harness",
+              "equip_saddle",
+              "shear_equipment",
+              "brush",
+              "equip_wolf_armor",
+              "inspect_age"
+            ]
+          },
+          "held_item": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "sneak": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "target",
+          "operation",
+          "held_item",
+          "sneak"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "身份、年龄、主人和装备状态要读回，不能以实体ID永久记忆。喂食/装备交互不是攻击；1.21.6剪装备、刷犰狳需独立预验。"
+    },
+    {
+      "name": "animal.leash",
+      "label_zh": "拴绳关系操作",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateEntity",
+        "bot.activateEntityAt",
+        "bot.equip",
+        "bot.setControlState",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "holder": {
+            "$ref": "#/definitions/entityRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "attach",
+              "chain",
+              "detach_with_shears",
+              "load_boat",
+              "unload_cargo"
+            ]
+          }
+        },
+        "required": [
+          "source",
+          "operation"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "chain"
+                  ]
+                }
+              },
+              "required": [
+                "operation"
+              ]
+            },
+            "then": {
+              "required": [
+                "holder"
+              ],
+              "properties": {}
+            }
+          }
+        ]
+      },
+      "contract_zh": "chain须holder；记录身份关系图与距离，不把跟随误判为拴绳。动物互拴、船载货物、快乐恶魂吊运需要1.21.6控制与可观察关系验证；无法观察则unknown。"
+    },
+    {
+      "name": "world.portal",
+      "label_zh": "点燃与穿越传送门",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateBlock",
+        "bot.pathfinder.goto",
+        "bot.game",
+        "bot.waitForTicks"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse",
+        "pathfinder"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "portal_anchor": {
+            "$ref": "#/definitions/position"
+          },
+          "destination_dimension": {
+            "type": "string",
+            "pattern": "^minecraft:[a-z0-9_]+$"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "ignite",
+              "enter"
+            ]
+          }
+        },
+        "required": [
+          "portal_anchor",
+          "destination_dimension",
+          "operation"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "只能正常生存交互；记录双向地标，等待实际dimension变化、chunk和实体就绪，清除旧路径/旧entity_id/窗口租约。禁止tp。"
+    },
+    {
+      "name": "world.redstone",
+      "label_zh": "红石输入与状态反馈",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateBlock",
+        "bot.blockAt",
+        "bot.placeBlock"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "toggle",
+              "pulse",
+              "observe"
+            ]
+          },
+          "pulses": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "expected": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/condition"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "input",
+          "operation",
+          "expected"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "pulse"
+                  ]
+                }
+              },
+              "required": [
+                "operation"
+              ]
+            },
+            "then": {
+              "required": [
+                "pulses"
+              ],
+              "properties": {}
+            }
+          }
+        ]
+      },
+      "contract_zh": "由真实红石网络响应；不是模拟器替世界改状态。读取powered/朝向/方块移动和容器流转；合成器脉冲需已完成GUI配置。"
+    },
+    {
+      "name": "world.archaeology",
+      "label_zh": "持续刷扫可疑方块",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateBlock",
+        "bot.activateItem",
+        "bot.deactivateItem",
+        "bot.lookAt"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "max_ticks": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "target",
+          "max_ticks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "锁定具体可疑方块，验证持续使用与dusted等状态推进，不调用dig代替刷扫；持续包序列必须1.21.6预验，底层组合不能先宣称成功。"
+    },
+    {
+      "name": "trial.interact",
+      "label_zh": "试炼与宝库交互",
+      "layer": "experimental_controller",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.activateBlock",
+        "bot.consume",
+        "bot.blockAt",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api",
+        "itemUse"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/definitions/blockRef"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "observe_spawner",
+              "use_trial_key",
+              "use_ominous_key",
+              "drink_ominous_bottle"
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "operation"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "仅负责原子观察/交互，不包办整场战斗。完成试炼与奖励来源由grader判断；normal/ominous宝库、钥匙类型和玩家使用资格须分开。"
+    },
+    {
+      "name": "world.wait_until",
+      "label_zh": "有限等待与状态监测",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.waitForTicks",
+        "bot.blockAt",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "condition": {
+            "$ref": "#/definitions/condition"
+          },
+          "check_interval_ticks": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "maximum_ticks": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "condition",
+          "check_interval_ticks",
+          "maximum_ticks"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "用于生长、孵化、红石自然变化等，只等待不快进世界；记录主动/被动等待，必须受剩余wall预算约束，超时checkpoint并交回规划。"
+    },
+    {
+      "name": "world.fish",
+      "label_zh": "抛竿与收竿",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.fish",
+        "bot.activateItem",
+        "bot.entities"
+      ],
+      "source_ids": [
+        "api",
+        "fish"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "max_casts": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "desired_fish_count": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "max_casts",
+          "desired_fish_count"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "原生fish已含浮漂/粒子咬钩检测与收竿逻辑；仍需水域、鱼竿、超时清理、渔获拾取与数量验证，不把promise完成当捕到鱼。"
+    },
+    {
+      "name": "build.blueprint",
+      "label_zh": "按蓝图建造与核验",
+      "layer": "controller_required",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.placeBlock",
+        "bot.dig",
+        "bot.blockAt",
+        "bot.pathfinder.goto"
+      ],
+      "source_ids": [
+        "api",
+        "pathfinder"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "blueprint_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "origin": {
+            "$ref": "#/definitions/position"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "build_missing",
+              "inspect",
+              "repair_mismatch"
+            ]
+          }
+        },
+        "required": [
+          "blueprint_id",
+          "origin",
+          "revision",
+          "operation"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "从发布给Agent的蓝图解析方块清单、放置序与差异；只做允许的局部修复，不偷偷生成材料。restart从世界重建完成状态；改屋顶后不得继续旧revision放置。"
+    },
+    {
+      "name": "plan.checkpoint",
+      "label_zh": "持久保存计划进度",
+      "layer": "planner_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [],
+      "source_ids": [],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "checkpoint": {
+            "$ref": "#/definitions/checkpoint"
+          }
+        },
+        "required": [
+          "checkpoint"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "原子落盘保存结构化阶段与行动账本，不保存思维链或密钥。按动作后置条件推进，不以发出命令或聊天承诺当作完成。"
+    },
+    {
+      "name": "plan.resume",
+      "label_zh": "重启后恢复计划",
+      "layer": "planner_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [],
+      "source_ids": [],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "plan_id",
+          "expected_revision"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "读持久状态并与当前世界、背包核对；未决action状态不明时先对账，禁止盲目重放交易/消耗类动作。"
+    },
+    {
+      "name": "plan.revise",
+      "label_zh": "目标变更与重规划",
+      "layer": "planner_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [],
+      "source_ids": [],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "new_goal": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cancel_action_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "plan_id",
+          "expected_revision",
+          "new_goal",
+          "cancel_action_ids"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "先停止旧revision写动作并核对最终状态，再发布新revision。MC-49只变更屋顶材料，旧基座/门窗依照原蓝图约束。"
+    },
+    {
+      "name": "verify.local",
+      "label_zh": "检查局部后置条件",
+      "layer": "native_wrapper",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.blockAt",
+        "bot.inventory",
+        "bot.entities",
+        "bot.game"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/condition"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "conditions"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "输出true/false/unknown及证据索引；只能判断Agent可观测条件，禁止给出隐藏grader判分或自行宣布整题通过。"
+    },
+    {
+      "name": "npc.say",
+      "label_zh": "向玩家自然语言反馈",
+      "layer": "presentation_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [
+        "bot.chat"
+      ],
+      "source_ids": [
+        "api"
+      ],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 240
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "progress",
+              "question",
+              "completion",
+              "failure"
+            ]
+          }
+        },
+        "required": [
+          "text",
+          "purpose"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "只发送自然语言；原始工具名/参数/!命令/函数调用仅写内部日志。此接口不得充当游戏命令执行通道。"
+    },
+    {
+      "name": "action.status",
+      "label_zh": "查询动作",
+      "layer": "orchestrator_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [],
+      "source_ids": [],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "action_id"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "查询已有动作状态，不重新执行；暴露progress、可恢复阶段和剩余预算。"
+    },
+    {
+      "name": "action.cancel",
+      "label_zh": "取消动作",
+      "layer": "orchestrator_service",
+      "implementation_status": "spec_only",
+      "surface_audit": "local_source_checked",
+      "gameplay_validation": "not_run",
+      "native_calls_or_fields": [],
+      "source_ids": [],
+      "arguments_schema": {
+        "type": "object",
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "action_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      },
+      "contract_zh": "幂等取消并等待控制权/窗口释放；返回partial_effects，不能假定已经发送的使用/攻击包被撤销。"
+    }
+  ]
+}

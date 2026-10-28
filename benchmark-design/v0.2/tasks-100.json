@@ -1,0 +1,5329 @@
+{
+  "protocol": {
+    "version": "0.2-design",
+    "status": "Design only. Original 50 preserved; 50 play-skill specifications added. No new world pack, grader, runner, training or in-game tests.",
+    "game": {
+      "edition": "Java",
+      "version": "1.21.6",
+      "mode": "survival",
+      "difficulty": "normal",
+      "experiments": false
+    },
+    "independent_episodes": true,
+    "default_start": {
+      "inventory": {},
+      "equipment": {},
+      "xp_level": 0,
+      "health": 20,
+      "food": 20,
+      "time_of_day": 6000
+    },
+    "death_ends_episode": true,
+    "allow_agent_cheats": false,
+    "allow_human_intervention": false,
+    "invariants": [
+      "No attacks or damage to human players.",
+      "No modifications of protected player structures.",
+      "All target resources must be obtained within the episode through permitted survival actions."
+    ],
+    "npc_quality_requirements": [
+      "No raw executable commands in player-facing chat; report this quality metric separately from gameplay task success."
+    ],
+    "grading": {
+      "primary": "Report original Core-50 SR and added Play-50 SR separately; optionally report equal-task MC-100 SR as a secondary aggregate.",
+      "success": "all task predicates plus no actual gameplay constraint violation",
+      "failure_denominator": "Tool gaps and model failures remain failures; invalid map snapshots or confirmed service outages invalidate the episode and require a logged rerun.",
+      "partial": "MC-50 uses its explicit weighted milestones; other tasks use equal-weight terminal predicate progress, with per-item count ratios capped at 1. Partial score is diagnostic and cannot replace strict success.",
+      "fairness": "Supplied-kit mechanism tests and empty-inventory survival tests have separate breakdowns. No tool-gap exclusions from the denominator."
+    },
+    "evaluation": {
+      "pilot": "one independently reset episode per task",
+      "main": "Three frozen instances per task, one rollout each: 300 episodes per Agent. Use staged pilots first; budgets remain uncalibrated.",
+      "same_budget_across_agents": true,
+      "tiers": "Difficulty groups are provisional. Do not claim strict ordering of every task before human pilots.",
+      "difficulty": "Original 5x10 levels retained. Added level labels are independent estimates; total tasks per level need not equal 20."
+    },
+    "knowledge_access": "Agent may read normal provided tool docs; no unrestricted Internet, evaluator world state, hidden item caches or access to other tasks. If Wiki access is enabled, publish a separate assisted track.",
+    "seeds": {
+      "status": "Unselected: must select, preflight, hash and freeze world snapshots before collecting results.",
+      "instances": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "source_notes": [
+      "Item IDs and key crafting recipes checked against installed minecraft-data for Java 1.21.6.",
+      "Game rules concerning drops, enchantments, villagers and interactions still require world-level preflight.",
+      "JSON predicates are a proposed specification DSL, not native Mindcraft task JSON."
+    ],
+    "name": "MC-NPC-100",
+    "task_count": 100,
+    "core_task_count": 50,
+    "added_task_count": 50,
+    "default_start_rule": "Original 50 unchanged. Added tasks explicitly declare kits, item components, XP and initial dimension; do not claim every new task starts empty.",
+    "runtime_control": "Tactical timing and continuous physics use documented local skill controllers shared by compared planners; count controller calls and API calls separately.",
+    "anti_contamination": "Do not give held-out tasks reference solutions. A development checklist can guide skills, but cannot itself prove generalization."
+  },
+  "tasks": [
+    {
+      "id": "MC-01",
+      "level": 1,
+      "title": "原木与木工具",
+      "player_prompt": "采集至少10个橡木原木，并制作一把木斧和一把木镐。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "natural_log_collected",
+          "count": 10,
+          "item": "oak_log",
+          "source_region": "harvest_zone"
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "wooden_axe": 1,
+            "wooden_pickaxe": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "wooden_axe": 1,
+            "wooden_pickaxe": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "10个原木按本回合累计自然采集量计算；允许把它们消耗成工具，不要求最终剩余10个。"
+    },
+    {
+      "id": "MC-02",
+      "level": 1,
+      "title": "石镐与圆石",
+      "player_prompt": "制作一把石镐，并在背包中保留至少16个圆石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "stone_pickaxe": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "stone_pickaxe": 1,
+            "cobblestone": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-03",
+      "level": 1,
+      "title": "工作台和箱子",
+      "player_prompt": "制作工作台和箱子，并放到标记的两个位置。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "workstation_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "crafting_table": 1,
+            "chest": 1
+          }
+        },
+        {
+          "kind": "blocks_at_markers",
+          "blocks": {
+            "crafting_table": "table_marker",
+            "chest": "chest_marker"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-04",
+      "level": 1,
+      "title": "木炭生产",
+      "player_prompt": "制作并放置熔炉，烧出至少8个木炭并保留在背包中。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "furnace_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "furnace": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 8,
+          "item": "charcoal"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "charcoal": 8
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "furnace",
+          "anchor": "furnace_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-05",
+      "level": 1,
+      "title": "火把",
+      "player_prompt": "制作并保留32支火把。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "torch": 32
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "torch": 32
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-06",
+      "level": 1,
+      "title": "石工具组合",
+      "player_prompt": "制作一把石斧、一把石剑和一把石锹，保留这三件物品。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "stone_axe": 1,
+            "stone_sword": 1,
+            "stone_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "stone_axe": 1,
+            "stone_sword": 1,
+            "stone_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-07",
+      "level": 1,
+      "title": "玻璃",
+      "player_prompt": "采集沙子并烧出8块玻璃，保留玻璃。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 8,
+          "item": "glass"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "glass": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-08",
+      "level": 1,
+      "title": "白床",
+      "player_prompt": "制作一张白色床并放在床位标记处。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "white_sheep",
+        "bed_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "white_bed": 1
+          }
+        },
+        {
+          "kind": "functional_bed_at_marker",
+          "item": "white_bed",
+          "anchor": "bed_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "本题允许击杀普通动物；与MC-15的禁止伤羊条件不同。"
+    },
+    {
+      "id": "MC-09",
+      "level": 1,
+      "title": "熟牛肉",
+      "player_prompt": "获得并保留8块熟牛肉。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "cattle"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "cooked_beef": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "mob_combat",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "允许熔炉烹饪或其他正常生存途径；地图没有现成熟食。"
+    },
+    {
+      "id": "MC-10",
+      "level": 1,
+      "title": "分类采集与交付",
+      "player_prompt": "各采集16个泥土、沙子、圆石，存入标记的交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "dirt_bank",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "dirt": 16,
+            "sand": 16,
+            "cobblestone": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "chest"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-11",
+      "level": 2,
+      "title": "煤矿开采",
+      "player_prompt": "采集并保留16个煤炭，不能用木炭替代。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "coal": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-12",
+      "level": 2,
+      "title": "铁锭",
+      "player_prompt": "采掘铁矿并冶炼，获得16个铁锭。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 16,
+          "item": "iron_ingot"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_ingot": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-13",
+      "level": 2,
+      "title": "铁工具组合",
+      "player_prompt": "制作铁镐、铁斧、铁锹各一把，并保留。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_pickaxe": 1,
+            "iron_axe": 1,
+            "iron_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_pickaxe": 1,
+            "iron_axe": 1,
+            "iron_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-14",
+      "level": 2,
+      "title": "剑盾装备",
+      "player_prompt": "制作铁剑和盾牌，把铁剑拿在主手、盾牌放在副手。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_sword": 1,
+            "shield": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "main_hand": "iron_sword",
+            "off_hand": "shield"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-15",
+      "level": 2,
+      "title": "无伤剪羊毛",
+      "player_prompt": "制作剪刀，获得8块白色羊毛，不能伤害或杀死羊。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore",
+        "white_sheep"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "shears": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "sheared_wool_collected",
+          "count": 8,
+          "item": "white_wool"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "white_wool": 8
+          }
+        },
+        {
+          "kind": "no_damage_to_species",
+          "species": "sheep"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-16",
+      "level": 2,
+      "title": "水桶与熔岩桶",
+      "player_prompt": "制作两个桶，分别装水和熔岩，保留一桶水和一桶熔岩。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore",
+        "water_pool",
+        "safe_lava_pool"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bucket": 2
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "water_bucket": 1,
+            "lava_bucket": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-17",
+      "level": 2,
+      "title": "小型麦田",
+      "player_prompt": "按地面标记建一个中心有水、周围8格耕地均种有小麦的3×3麦田。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "grass_and_seeds",
+        "water_pool",
+        "iron_ore",
+        "coal_ore",
+        "stone_outcrop",
+        "farm_3x3_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_3x3",
+          "anchor": "farm_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": "小麦处于任意生长阶段均可；不要求等待成熟。"
+    },
+    {
+      "id": "MC-18",
+      "level": 2,
+      "title": "面包",
+      "player_prompt": "收获成熟小麦，制作并保留8个面包。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "mature_wheat_24"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "bread": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-19",
+      "level": 2,
+      "title": "短途补给",
+      "player_prompt": "准备16块熟牛肉、32支火把和一桶水，全部放入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "cattle",
+        "water_pool",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "cooked_beef": 16,
+            "torch": 32,
+            "water_bucket": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "chest",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-20",
+      "level": 2,
+      "title": "铁轨与矿车",
+      "player_prompt": "制作16个普通铁轨和一辆矿车，保留它们。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "rail": 16,
+            "minecart": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "rail": 16,
+            "minecart": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-21",
+      "level": 3,
+      "title": "全套铁甲",
+      "player_prompt": "从零制作一整套铁甲并穿上：头盔、胸甲、护腿、靴子。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": "铁甲四件的配方合计24个铁锭，不含采矿工具和燃料成本。"
+    },
+    {
+      "id": "MC-22",
+      "level": 3,
+      "title": "铁装战斗套装",
+      "player_prompt": "制作并穿上全套铁甲，另外保留铁镐，并装备铁剑和盾牌。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1,
+            "iron_pickaxe": 1,
+            "iron_sword": 1,
+            "shield": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots",
+            "main_hand": "iron_sword",
+            "off_hand": "shield"
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_pickaxe": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-23",
+      "level": 3,
+      "title": "首批钻石",
+      "player_prompt": "采掘钻石矿，获得并保留3颗钻石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "mined_drop_collected",
+          "count": 3,
+          "item": "diamond",
+          "source_blocks": [
+            "diamond_ore",
+            "deepslate_diamond_ore"
+          ]
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond": 3
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-24",
+      "level": 3,
+      "title": "钻石镐与黑曜石",
+      "player_prompt": "制作钻石镐，并用它采集4块黑曜石，保留钻石镐和黑曜石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "mined_drop_collected",
+          "count": 4,
+          "item": "obsidian",
+          "tool": "diamond_pickaxe"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "obsidian": 4
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-25",
+      "level": 3,
+      "title": "时钟与指南针",
+      "player_prompt": "制作并保留一个时钟和一个指南针。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "gold_ore",
+        "redstone_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "clock": 1,
+            "compass": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "clock": 1,
+            "compass": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-26",
+      "level": 3,
+      "title": "蛋糕",
+      "player_prompt": "制作一个蛋糕并放在蛋糕标记处，不要吃掉它。补给箱只提供一个鸡蛋。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "cattle",
+        "mature_wheat_3",
+        "sugar_cane",
+        "egg_cache_one",
+        "cake_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "cake": 1
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "cake",
+          "anchor": "cake_marker",
+          "states": {
+            "bites": "0"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "use_item",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": "固定提供一个鸡蛋仅用于消除等鸡下蛋的随机等待；其他原料自行获取。"
+    },
+    {
+      "id": "MC-27",
+      "level": 3,
+      "title": "繁殖牛羊",
+      "player_prompt": "分别繁殖一对成年牛和一对成年羊，得到一只小牛和一只小羊。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_cow_pair",
+        "adult_sheep_pair",
+        "mature_wheat_8"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "breeding_birth",
+          "count": 1,
+          "species": "cow",
+          "caused_by": "agent"
+        },
+        {
+          "kind": "event_count",
+          "event": "breeding_birth",
+          "count": 1,
+          "species": "sheep",
+          "caused_by": "agent"
+        },
+        {
+          "kind": "offspring_alive",
+          "species": [
+            "cow",
+            "sheep"
+          ]
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "use_item",
+        "entity_tracking"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-28",
+      "level": 3,
+      "title": "收获与复种",
+      "player_prompt": "收获标记农田的24株成熟小麦，制作8个面包，并在原来的24格重新播种。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "mature_wheat_24",
+        "farm_24_marker",
+        "grass_and_seeds"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "crop_harvest",
+          "count": 24,
+          "item": "wheat",
+          "source_region": "farm_24"
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-29",
+      "level": 3,
+      "title": "基础小木屋",
+      "player_prompt": "在标记处建一座5×5橡木屋：三格内高、完整地板和屋顶、南侧一扇门、四扇单格玻璃窗。按提供的尺寸图施工。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "house_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_empty",
+          "anchor": "house_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "blueprint",
+        "place",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-30",
+      "level": 3,
+      "title": "可居住木屋",
+      "player_prompt": "建造同样的5×5橡木屋，按家具位置图放好白床、工作台、熔炉和箱子，门到室内中央要能走通。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "white_sheep",
+        "house_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "walkable_path",
+          "from": "outside_door",
+          "to": "house_center",
+          "clearance_height": 2
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "blueprint",
+        "place",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-31",
+      "level": 4,
+      "title": "附魔台",
+      "player_prompt": "从零制作一个附魔台，并放在标记处。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool",
+        "sugar_cane",
+        "cattle",
+        "enchant_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "enchanting_table": 1
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "enchanting_table",
+          "anchor": "enchant_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item",
+        "tool_selection",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-32",
+      "level": 4,
+      "title": "钻石工具组合",
+      "player_prompt": "制作钻石镐、钻石斧、钻石锹各一把，保留它们。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "diamond_axe": 1,
+            "diamond_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "diamond_axe": 1,
+            "diamond_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-33",
+      "level": 4,
+      "title": "下界往返",
+      "player_prompt": "自行建造并点燃下界传送门，进入下界，再返回主世界基地。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool",
+        "gravel",
+        "nether_safe_spawn"
+      ],
+      "success_all": [
+        {
+          "kind": "agent_built_portal",
+          "activated": true
+        },
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "event_count",
+          "event": "dimension_return",
+          "count": 1,
+          "from": "the_nether",
+          "to": "overworld"
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "portal",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-34",
+      "level": 4,
+      "title": "下界资源运输",
+      "player_prompt": "进入下界，采集16个下界石英和16个荧石粉，返回基地并存入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "nether_safe_spawn",
+        "nether_quartz_ore",
+        "accessible_glowstone",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "quartz": 16,
+            "glowstone_dust": 16
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "portal",
+        "navigation",
+        "chest"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-35",
+      "level": 4,
+      "title": "抗火药水",
+      "player_prompt": "从零酿造3瓶普通抗火药水并带回基地，不要改成喷溅药水。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "magma_cube_area",
+        "sand_bank",
+        "water_pool",
+        "base"
+      ],
+      "success_all": [
+        {
+          "kind": "potion_inventory",
+          "item": "potion",
+          "potion": "fire_resistance",
+          "count": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "brewing_output",
+          "count": 3,
+          "potion": "fire_resistance"
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "portal",
+        "mob_combat",
+        "brew",
+        "craft",
+        "smelt",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-36",
+      "level": 4,
+      "title": "末影之眼",
+      "player_prompt": "获得并保留4个末影之眼。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "enderman_encounters"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "ender_eye": 4
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "ender_eye": 4
+          }
+        }
+      ],
+      "capabilities": [
+        "portal",
+        "mob_combat",
+        "craft",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-37",
+      "level": 4,
+      "title": "可运行铁路",
+      "player_prompt": "沿标记直线铺设16个普通铁轨和6个动力铁轨，正确供电，并乘矿车连续移动至少16格。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "gold_ore",
+        "redstone_ore",
+        "rail_corridor_22"
+      ],
+      "success_all": [
+        {
+          "kind": "rail_corridor",
+          "length": 22,
+          "ordinary_rails": 16,
+          "powered_rails": 6,
+          "powered": true
+        },
+        {
+          "kind": "event_count",
+          "event": "agent_minecart_ride",
+          "count": 1,
+          "continuous_distance_min": 16
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "redstone",
+        "place",
+        "vehicle"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-38",
+      "level": 4,
+      "title": "跨河木桥",
+      "player_prompt": "沿标记建一座长12格、净通行宽2格的橡木桥，通道外两侧各有连续栏杆，并从桥上走到对岸。不能填平河道。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "river_gap_12",
+        "bridge_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "bridge_12x2",
+          "anchor": "bridge_origin",
+          "exact": true
+        },
+        {
+          "kind": "water_region_unchanged",
+          "region": "river_below_bridge"
+        },
+        {
+          "kind": "event_count",
+          "event": "crossed_bridge",
+          "count": 1,
+          "on_bridge": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "navigation",
+        "constraint"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-39",
+      "level": 4,
+      "title": "农牧小基地",
+      "player_prompt": "建24格带水小麦田，以及带栅栏门的牛栏，把两头指定成年牛完整带入并关好门。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "water_pool",
+        "grass_and_seeds",
+        "mature_wheat_8",
+        "adult_cow_pair",
+        "farm_and_pen_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "cattle_pen",
+          "anchor": "pen_origin",
+          "exact": true
+        },
+        {
+          "kind": "designated_entities_inside",
+          "species": "cow",
+          "count": 2,
+          "region": "cattle_pen",
+          "alive": true
+        },
+        {
+          "kind": "gate_closed",
+          "anchor": "pen_gate"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "farm",
+        "place",
+        "animal_luring",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-40",
+      "level": 4,
+      "title": "完整远征装备",
+      "player_prompt": "制作并穿上全套铁甲，准备钻石镐、水桶、16个面包和64支火把；把四类补给存入基地交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "mature_wheat_48",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1,
+            "diamond_pickaxe": 1,
+            "bread": 16,
+            "torch": 64
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "diamond_pickaxe": 1,
+            "water_bucket": 1,
+            "bread": 16,
+            "torch": 64
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip",
+        "farm",
+        "chest",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-41",
+      "level": 5,
+      "title": "全套钻石甲",
+      "player_prompt": "从零制作并穿上全套钻石甲，不接受直接购买或拾取成品护甲。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore_large"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_helmet": 1,
+            "diamond_chestplate": 1,
+            "diamond_leggings": 1,
+            "diamond_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "diamond_helmet",
+            "torso": "diamond_chestplate",
+            "legs": "diamond_leggings",
+            "feet": "diamond_boots"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-42",
+      "level": 5,
+      "title": "烈焰棒远征",
+      "player_prompt": "自行进入下界，获取6根烈焰棒，带回主世界基地。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "blaze_spawner",
+        "base"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "mob_drop_collected",
+          "count": 6,
+          "item": "blaze_rod",
+          "species": "blaze"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "blaze_rod": 6
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "mob_combat",
+        "navigation",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-43",
+      "level": 5,
+      "title": "下界作物迁移",
+      "player_prompt": "自行去下界取得下界疣和灵魂沙，在主世界基地的8个标记格铺灵魂沙并种满下界疣。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "soul_sand",
+        "wart_farm_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "wart_farm_8",
+          "anchor": "wart_farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "navigation",
+        "farm",
+        "place",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-44",
+      "level": 5,
+      "title": "延长力量药水",
+      "player_prompt": "从零酿造3瓶持续8分钟的力量药水，并放入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "sand_bank",
+        "water_pool",
+        "redstone_ore",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "potion_container",
+          "anchor": "delivery_chest",
+          "item": "potion",
+          "potion": "long_strength",
+          "count": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "brewing_output",
+          "count": 3,
+          "potion": "long_strength"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "mob_combat",
+        "brew",
+        "craft",
+        "chest",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-45",
+      "level": 5,
+      "title": "完整高级附魔流程",
+      "player_prompt": "从零建造附魔台和15个有效书架，制作钻石镐，获得经验并对它完成一次30级档位附魔。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "enchanting_route_resources",
+        "lapis_ore",
+        "repeatable_xp_source",
+        "enchant_area"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "enchanting_table": 1,
+            "bookshelf": 15,
+            "diamond_pickaxe": 1
+          }
+        },
+        {
+          "kind": "effective_bookshelves",
+          "anchor": "enchant_marker",
+          "count_min": 15
+        },
+        {
+          "kind": "event_count",
+          "event": "enchanting_table_use",
+          "count": 1,
+          "option_required_level": 30,
+          "item": "diamond_pickaxe"
+        },
+        {
+          "kind": "enchanted_inventory_item",
+          "item": "diamond_pickaxe",
+          "any_non_curse": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "enchant",
+        "place",
+        "xp_management",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "不指定抽中的附魔种类；避免把特定附魔的随机出现率当成规划能力。"
+    },
+    {
+      "id": "MC-46",
+      "level": 5,
+      "title": "交易与铁砧附魔",
+      "player_prompt": "制作钻石镐，通过村民获得耐久III附魔书，制作铁砧并把附魔加到钻石镐上。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore_large",
+        "diamond_ore",
+        "sugar_cane",
+        "cattle",
+        "fletcher_fixed",
+        "librarian_unbreaking_iii_fixed",
+        "repeatable_xp_source"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "anvil": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "villager_trade",
+          "count": 1,
+          "acquired_enchantment": "unbreaking",
+          "level": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "anvil_apply_enchantment",
+          "count": 1,
+          "item": "diamond_pickaxe",
+          "enchantment": "unbreaking",
+          "level": 3
+        },
+        {
+          "kind": "enchanted_inventory_item",
+          "item": "diamond_pickaxe",
+          "enchantments": {
+            "unbreaking": 3
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "trade",
+        "anvil",
+        "xp_management",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-47",
+      "level": 5,
+      "title": "自给生存基地",
+      "player_prompt": "建立完整木屋、24格小麦田、两头牛的封闭牛栏；穿上自制铁甲，并在屋内箱子储存16个面包和32支火把。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_farm_pen_resources",
+        "iron_ore",
+        "coal_ore",
+        "adult_cow_pair",
+        "base_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "cattle_pen",
+          "anchor": "pen_origin",
+          "exact": true
+        },
+        {
+          "kind": "designated_entities_inside",
+          "species": "cow",
+          "count": 2,
+          "region": "cattle_pen",
+          "alive": true
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "house_chest",
+          "items": {
+            "bread": 16,
+            "torch": 32
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "animal_luring",
+        "blueprint",
+        "place",
+        "planning",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-48",
+      "level": 5,
+      "title": "中断后继续建房",
+      "player_prompt": "收集材料建造带家具的5×5木屋。期间会发生一次机器人程序重启，请恢复后继续完成，不要重复领取任务或拆掉已完成部分。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_resources",
+        "house_marker",
+        "restart_hook"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "event_count",
+          "event": "benchmark_restart",
+          "count": 1
+        },
+        {
+          "kind": "post_restart_progress",
+          "new_correct_cells_min": 10
+        },
+        {
+          "kind": "protected_region_unchanged",
+          "region": "completed_floor_at_restart"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "persistent_memory",
+        "recovery",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "仅主办方触发一次重启；世界和背包保留，内存对话清空，所有方案允许保留自己的本地任务文件。",
+      "intervention": {
+        "trigger": "25 floor cells and at least 5 correct wall cells placed",
+        "action": "restart_agent_once",
+        "preserve": [
+          "world",
+          "inventory",
+          "agent_persistent_files"
+        ],
+        "clear": [
+          "process_memory",
+          "in_memory_chat"
+        ],
+        "downtime_seconds": 10
+      }
+    },
+    {
+      "id": "MC-49",
+      "level": 5,
+      "title": "施工中修改需求",
+      "player_prompt": "先建一座5×5橡木屋，门朝南，按家具图放好白床、工作台、熔炉和箱子。收到后续修改时按新要求继续，保留已完成且符合新要求的结构。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_resources",
+        "stone_outcrop",
+        "house_marker",
+        "change_request_hook"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_revised",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "event_count",
+          "event": "benchmark_change_request",
+          "count": 1
+        },
+        {
+          "kind": "protected_region_unchanged",
+          "region": "completed_floor_at_change"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "dialogue",
+        "replanning",
+        "constraint",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "固定后续消息：屋顶改用圆石，保留其余结构和家具。",
+      "intervention": {
+        "trigger": "25 floor cells and at least 5 correct wall cells placed",
+        "action": "send_user_message_once",
+        "message": "屋顶改用圆石，保留其余结构和家具。",
+        "final_blueprint": "house_5x5_revised"
+      }
+    },
+    {
+      "id": "MC-50",
+      "level": 5,
+      "title": "草方块：完整生存路线",
+      "player_prompt": "从空背包开始，获得1个可以放进背包的草方块。不得使用管理员赠予、现成附魔工具或携带草方块的末影人路线。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest_large",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore_large",
+        "sugar_cane",
+        "cattle",
+        "grass_patch",
+        "fletcher_fixed",
+        "librarian_silk_touch_fixed",
+        "repeatable_xp_source"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "grass_block": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "silk_touch_block_drop_collected",
+          "count": 1,
+          "source_block": "grass_block",
+          "item": "grass_block",
+          "tool_enchantment": "silk_touch",
+          "source_region": "grass_patch"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "trade",
+        "anvil",
+        "enchant",
+        "xp_management",
+        "tool_selection",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "主路线固定可用的村民交易，不要求反复刷村民职业或等待附魔随机出现。普通挖掘得到泥土不算成功，种子、草和地表变绿也不算。",
+      "diagnostic_variants": [
+        {
+          "id": "silk_tool_supplied",
+          "official_score": false,
+          "change": "Provide a fresh iron_shovel with Silk Touch I; keep the grass patch.",
+          "purpose": "Separate correct block harvesting from progression and resource planning."
+        },
+        {
+          "id": "silk_book_supplied",
+          "official_score": false,
+          "change": "Provide Silk Touch I book only; no tool, anvil, iron, emeralds or XP.",
+          "purpose": "Separate trading from anvil, XP and tool selection."
+        }
+      ],
+      "progress_milestones": [
+        {
+          "weight": 0.15,
+          "predicate": {
+            "kind": "ever_owned_tool_tier",
+            "tier_min": "stone"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "ever_owned_silk_touch_source",
+            "allow": [
+              "enchanted_book",
+              "enchanted_tool"
+            ]
+          }
+        },
+        {
+          "weight": 0.25,
+          "predicate": {
+            "kind": "ever_owned_usable_silk_touch_tool"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "event_count",
+            "event": "silk_touch_block_drop_collected",
+            "count": 1,
+            "source_block": "grass_block",
+            "item": "grass_block"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "inventory_at_least",
+            "items": {
+              "grass_block": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "MC-51",
+      "level": 1,
+      "category": "工作站与村民",
+      "title": "制箭台边界与制箭",
+      "player_prompt": "附近有制箭台。请用给定的燧石、木棍和羽毛制作16支普通箭，并保留。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "flint": 4,
+        "stick": 4,
+        "feather": 4
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "fletching_table_decoy",
+        "oak_tree",
+        "clear_work_area"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-51-1",
+          "expectation_zh": "本回合以合法配方制作产出至少16支arrow，终止时背包至少16支。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-51-2",
+          "expectation_zh": "未以不存在的制箭台配方或虚构GUI结果作为完成证据。"
+        }
+      ],
+      "capabilities": [
+        "craft",
+        "workstation_selection"
+      ],
+      "common_failure": "反复右击制箭台，幻想存在箭矢合成GUI。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/block-month--fletching-table"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-52",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "制箭师职业与交易",
+      "player_prompt": "让标记的无业村民成为制箭师，并通过交易获得2颗绿宝石。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "fletching_table": 1,
+        "stick": 64
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_unemployed_non_nitwit_untraded_villager",
+        "isolated_job_site",
+        "daytime_fixed_trade_stock"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-52-1",
+          "expectation_zh": "同一指定村民从无业转为fletcher，并绑定Agent放置的制箭台。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-52-2",
+          "expectation_zh": "由该村民的木棍交易获得至少2颗emerald；没有提供初始绿宝石。"
+        }
+      ],
+      "capabilities": [
+        "place",
+        "villager_job_site",
+        "trade"
+      ],
+      "common_failure": "对幼年村民、傻子村民或已锁定职业的村民反复放工作站。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/block-month--fletching-table"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-53",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "识别交易后的职业锁定",
+      "player_prompt": "A是已交易过的制箭师，B是未交易过的无业成年村民。请让B成为图书管理员，保留A的职业。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "lectern": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "villager_A_traded_fletcher",
+        "villager_B_unemployed_untraded",
+        "no_other_job_sites"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-53-1",
+          "expectation_zh": "B最终为librarian且与新讲台建立工作站关联。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-53-2",
+          "expectation_zh": "A保持fletcher，未被伤害；Agent未把仅放置讲台误报为职业已改变。"
+        }
+      ],
+      "capabilities": [
+        "entity_tracking",
+        "villager_job_site",
+        "constraint"
+      ],
+      "common_failure": "试图让已完成交易的A改职业，或混淆两个实体。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-54",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "砂轮与诅咒边界",
+      "player_prompt": "使用砂轮去掉这把铁镐的普通附魔，保留工具，不要丢弃它。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_pickaxe": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "grindstone",
+        "iron_pickaxe_with_unbreaking_I_and_vanishing_curse"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-54-1",
+          "expectation_zh": "原铁镐的耐久I被移除，消失诅咒仍存在，工具未被替换。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-54-2",
+          "expectation_zh": "有真实砂轮交互和输出领取事件，未把未去掉诅咒误报为失败或不断重复处理。"
+        }
+      ],
+      "capabilities": [
+        "grindstone",
+        "window_slots",
+        "inspect_enchantments"
+      ],
+      "common_failure": "认为砂轮能移除所有诅咒；只看物品名字不看附魔数据。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "initial_item_components": [
+        {
+          "item": "iron_pickaxe",
+          "enchantments": {
+            "unbreaking": 1,
+            "vanishing_curse": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "MC-55",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "制图台扩图与锁图",
+      "player_prompt": "把给定地图扩展一级，然后锁定它并保留。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "filled_map": 1,
+        "paper": 1,
+        "glass_pane": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "cartography_table",
+        "filled_map_scale_0_unlocked"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-55-1",
+          "expectation_zh": "得到同一地图区域谱系的scale=1地图，不能交付其他预制地图。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-55-2",
+          "expectation_zh": "最终地图locked=true，并有扩图后再锁图的交互顺序证据。"
+        }
+      ],
+      "capabilities": [
+        "cartography",
+        "window_slots",
+        "inspect_map"
+      ],
+      "common_failure": "先锁图导致不能扩图，或把空地图当作已绘制地图。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "initial_item_components": [
+        {
+          "item": "filled_map",
+          "map_scale": 0,
+          "map_locked": false,
+          "map_region": "fixed_source_region"
+        }
+      ]
+    },
+    {
+      "id": "MC-56",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "切石机材料效率",
+      "player_prompt": "只有6块石头，请做出6个石楼梯，不能再采石。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "stone": 6
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "stonecutter",
+        "protected_stone_region"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-56-1",
+          "expectation_zh": "通过切石机获得6个stone_stairs，终止时全部保留。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-56-2",
+          "expectation_zh": "没有从世界、补给箱或其他实体额外取得石材。"
+        }
+      ],
+      "capabilities": [
+        "stonecutter",
+        "window_slots",
+        "resource_planning"
+      ],
+      "common_failure": "用普通工作台配方，六块石头只做出四个楼梯。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-57",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "铁砧修复和命名",
+      "player_prompt": "把指定铁镐修好一些，并改名为“勘探镐”，最多使用2个铁锭。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_pickaxe": 1,
+        "iron_ingot": 2
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 10,
+      "fixture_requirements": [
+        "anvil",
+        "pickaxe_damaged_50_percent",
+        "agent_xp_level_10"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-57-1",
+          "expectation_zh": "同一铁镐最终自定义名字为勘探镐，损伤值小于初始值。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-57-2",
+          "expectation_zh": "最多消耗2铁锭；完成真实铁砧操作且没有复制或替换工具。"
+        }
+      ],
+      "capabilities": [
+        "anvil",
+        "window_slots",
+        "inspect_durability",
+        "xp_management"
+      ],
+      "common_failure": "把名字改了就声称已修好，或忽略经验成本。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "initial_item_components": [
+        {
+          "item": "iron_pickaxe",
+          "damage_fraction": 0.5
+        }
+      ]
+    },
+    {
+      "id": "MC-58",
+      "level": 3,
+      "category": "工作站与村民",
+      "title": "新版锻造台三输入升级",
+      "player_prompt": "用给定材料把钻石镐升级为下界合金镐。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "diamond_pickaxe": 1,
+        "netherite_ingot": 1,
+        "netherite_upgrade_smithing_template": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "smithing_table"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-58-1",
+          "expectation_zh": "真实锻造得到1把netherite_pickaxe。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-58-2",
+          "expectation_zh": "使用并消耗升级模板、钻石镐和下界合金锭，不能沿用不需要模板的旧版本流程。"
+        }
+      ],
+      "capabilities": [
+        "smithing",
+        "window_slots",
+        "recipe_versioning"
+      ],
+      "common_failure": "按旧版两输入锻造流程操作。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.20"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-59",
+      "level": 3,
+      "category": "工作站与村民",
+      "title": "合成器自动做火把",
+      "player_prompt": "配置合成器，用红石触发生产16支火把，不要用普通工作台代做。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "crafter": 1,
+        "coal": 4,
+        "stick": 4,
+        "stone_button": 1,
+        "stone": 2
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "clear_redstone_plot",
+        "output_collection_area"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-59-1",
+          "expectation_zh": "配置槽位并用红石激活，累计至少4次有效合成器出料，产出16支torch。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-59-2",
+          "expectation_zh": "Agent收取16支火把；普通工作台产出不计入。"
+        }
+      ],
+      "capabilities": [
+        "crafter",
+        "slot_enable_disable",
+        "redstone",
+        "item_collection"
+      ],
+      "common_failure": "没有禁用多余槽位，或只有摆出配方而没有红石触发。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-60",
+      "level": 2,
+      "category": "工作站与村民",
+      "title": "堆肥桶获取骨粉",
+      "player_prompt": "利用堆肥桶和给定种子获取1个骨粉。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "composter": 1,
+        "wheat_seeds": 128
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "clear_plot"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-60-1",
+          "expectation_zh": "记录到合法堆肥填充、成熟和取出流程，最终取得至少1个bone_meal。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-60-2",
+          "expectation_zh": "没有把只填到未成熟阶段当作成功，额外骨粉不来自其他来源。"
+        }
+      ],
+      "capabilities": [
+        "composter",
+        "use_item",
+        "world_state"
+      ],
+      "common_failure": "不知道要等成熟并再次交互领取；按固定次数点击就宣称成功。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-61",
+      "level": 2,
+      "category": "弓弩盾牌与战斗",
+      "title": "弓的蓄力和距离补偿",
+      "player_prompt": "从固定射击线命中三个标靶，每个至少一次，最多使用12支箭。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "bow": 1,
+        "arrow": 12
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "target_blocks_at_2_16_24_blocks",
+        "fixed_firing_line",
+        "dry_clear_range"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-61-1",
+          "expectation_zh": "三处不同距离标靶各记录至少一次由Agent箭矢产生的命中。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-61-2",
+          "expectation_zh": "计分射击达到未附魔弓满蓄力状态；按服务器使用时长及弹射物状态预验，暂定20游戏刻。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-61-3",
+          "expectation_zh": "没有越过射击线缩短距离，使用箭矢不超过12支。"
+        }
+      ],
+      "capabilities": [
+        "bow_charge_release",
+        "aim_ballistics",
+        "projectile_tracking"
+      ],
+      "common_failure": "点按不蓄力、远距离不抬高瞄准、用旧版固定宽容碰撞框代替实际命中。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--bow",
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "grading_slices": [
+        "near-range versus far-range hit rate",
+        "draw-duration distribution",
+        "shots used"
+      ]
+    },
+    {
+      "id": "MC-62",
+      "level": 3,
+      "category": "弓弩盾牌与战斗",
+      "title": "移动目标预判",
+      "player_prompt": "用弓命中沿固定路线运动的指定僵尸至少3次，只能远程攻击。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "bow": 1,
+        "arrow": 16
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "marked_moving_zombie_with_health_40",
+        "deterministic_patrol",
+        "firing_zone"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-62-1",
+          "expectation_zh": "同一指定僵尸受到至少3次Agent弓箭命中，箭矢身份和命中时间可追溯。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-62-2",
+          "expectation_zh": "没有使用近战伤害或追到靶场限制距离内，最多发射16支箭。"
+        }
+      ],
+      "capabilities": [
+        "aim_leading",
+        "bow_charge_release",
+        "projectile_tracking"
+      ],
+      "common_failure": "只瞄准目标当前坐标，不考虑运动与飞行时间。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--bow"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-63",
+      "level": 2,
+      "category": "弓弩盾牌与战斗",
+      "title": "弩的预装与切换",
+      "player_prompt": "先给弩装箭，切到其他物品至少2秒，再切回弩射中标靶。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "crossbow": 1,
+        "arrow": 3,
+        "stone_pickaxe": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "target_block_16_blocks"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-63-1",
+          "expectation_zh": "同一把弩在装填后存在charged_projectiles，切换物品至少40游戏刻后仍保留弹药。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-63-2",
+          "expectation_zh": "重新装备后发射并命中指定标靶，不能在切回后重新装填来替代预装。"
+        }
+      ],
+      "capabilities": [
+        "crossbow_load",
+        "hotbar_switch",
+        "inspect_components",
+        "aim_ballistics"
+      ],
+      "common_failure": "把弩当弓，装填后松手就以为已经发射。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--crossbow"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-64",
+      "level": 2,
+      "category": "弓弩盾牌与战斗",
+      "title": "盾牌正面格挡",
+      "player_prompt": "在标记位置用盾牌挡住骷髅射来的3支箭，不能靠躲到墙后完成。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "shield": 1,
+        "iron_sword": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "single_skeleton_controlled_lane",
+        "start_after_ready",
+        "no_cover_in_counting_zone"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-64-1",
+          "expectation_zh": "至少3次真实盾牌格挡，攻击来源和Agent朝向匹配；仅装备在副手不计分。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-64-2",
+          "expectation_zh": "格挡阶段Agent损失生命值不超过4，不能通过无限拉远距离让骷髅停止射击。"
+        }
+      ],
+      "capabilities": [
+        "shield_raise_lower",
+        "offhand",
+        "face_threat",
+        "combat_telemetry"
+      ],
+      "common_failure": "只有装备而没有举盾，或背对来箭方向。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--shield"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "diagnostic_variants": [
+        {
+          "name": "shield_temporarily_disabled",
+          "official_score": false,
+          "rule": "Only include after a Java 1.21.6 non-player axe/cooldown fixture is preflighted. Evaluate retreat/cover and recovery; do not add a human-player combat requirement."
+        }
+      ]
+    },
+    {
+      "id": "MC-65",
+      "level": 3,
+      "category": "弓弩盾牌与战斗",
+      "title": "双方向威胁与转盾",
+      "player_prompt": "左右两个发射方向按固定信号轮流攻击，请转向并各成功格挡3次。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "shield": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "two_skeleton_lanes_120_degrees_apart",
+        "fixed_public_attack_signal",
+        "no_simultaneous_unblockable_setup"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-65-1",
+          "expectation_zh": "来自两条射线的攻击各有至少3次真实格挡，方向标签和伤害事件可验证。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-65-2",
+          "expectation_zh": "损失生命值不超过6，保持在标记防守区内。"
+        }
+      ],
+      "capabilities": [
+        "face_threat",
+        "shield_raise_lower",
+        "reactive_control"
+      ],
+      "common_failure": "把盾牌当作全方向被动护甲。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--shield"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-66",
+      "level": 2,
+      "category": "弓弩盾牌与战斗",
+      "title": "近战攻击冷却",
+      "player_prompt": "使用铁剑击败指定僵尸，尽量让每次有效攻击充分恢复后再出手。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_sword": 1,
+        "shield": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "zombie_with_health_40",
+        "safe_melee_arena"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-66-1",
+          "expectation_zh": "由Agent铁剑击杀指定僵尸。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-66-2",
+          "expectation_zh": "至少80%的有效近战攻击在攻击强度恢复到0.9以上时发起；同时报告空挥次数，不用客户端点击间隔替代实际强度。"
+        }
+      ],
+      "capabilities": [
+        "melee_cooldown",
+        "attack_timing",
+        "combat_telemetry"
+      ],
+      "common_failure": "连续乱点导致每次伤害很低；把旧版点击频率当成战斗能力。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-67",
+      "level": 3,
+      "category": "弓弩盾牌与战斗",
+      "title": "跳劈暴击",
+      "player_prompt": "对指定僵尸完成至少2次合法近战暴击，并击败它。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_sword": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "zombie_with_health_40",
+        "flat_arena",
+        "no_strength_or_jump_effects"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-67-1",
+          "expectation_zh": "指定目标至少承受2次服务器确认的Agent近战暴击，而非仅跳跃动画或普通命中。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-67-2",
+          "expectation_zh": "最终由Agent击杀目标，期间没有攻击人类玩家。"
+        }
+      ],
+      "capabilities": [
+        "jump_fall_timing",
+        "melee_cooldown",
+        "combat_telemetry"
+      ],
+      "common_failure": "上升阶段出手、疾跑条件不合或冷却不足却自称暴击。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-68",
+      "level": 3,
+      "category": "弓弩盾牌与战斗",
+      "title": "落地水与回收",
+      "player_prompt": "从标记的12格高台落下，用水安全着陆，并把水重新收回桶中。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "water_bucket": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "platform_12_blocks",
+        "clear_landing_zone",
+        "no_existing_water_or_soft_landing"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-68-1",
+          "expectation_zh": "记录一次至少10格连续下落，并在落地区实际放出水。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-68-2",
+          "expectation_zh": "该次着陆没有摔落伤害，最后背包重新有1个water_bucket。"
+        }
+      ],
+      "capabilities": [
+        "fall_prediction",
+        "timed_item_use",
+        "bucket",
+        "world_state"
+      ],
+      "common_failure": "在空中乱点、到地面才放水、或忘记收水。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-69",
+      "level": 2,
+      "category": "弓弩盾牌与战斗",
+      "title": "划船运输与回收",
+      "player_prompt": "坐船把指定牛带到河对岸，安全下船，并回收船。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "oak_boat": 1,
+        "wheat": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_cow",
+        "river_transport_route",
+        "far_bank_pen"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-69-1",
+          "expectation_zh": "指定牛与Agent确实乘坐同一船并完成过河位移。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-69-2",
+          "expectation_zh": "牛存活且位于对岸目标区，Agent在岸上，船作为物品回收到背包。"
+        }
+      ],
+      "capabilities": [
+        "animal_luring",
+        "boat_mount_control",
+        "vehicle_dismount",
+        "entity_tracking"
+      ],
+      "common_failure": "牛上船但自己没上；拆船时误伤乘客；只游泳到对岸。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-70",
+      "level": 3,
+      "category": "弓弩盾牌与战斗",
+      "title": "深水取物与呼吸管理",
+      "player_prompt": "从水下长通道尽头取回标记物，再回到岸边，不能受到溺水伤害。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "oak_door": 4,
+        "stone_pickaxe": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "underwater_corridor_35_blocks",
+        "deep_water",
+        "underwater_chest_marked_item",
+        "valid_door_floor"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-70-1",
+          "expectation_zh": "指定箱子中的1颗amethyst_shard由Agent带回岸边。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-70-2",
+          "expectation_zh": "无溺水伤害，服务器记录到有效补气或其他题面允许的呼吸管理；不能依靠管理员氧气恢复。"
+        }
+      ],
+      "capabilities": [
+        "swimming",
+        "air_management",
+        "door_air_pocket_java",
+        "chest"
+      ],
+      "common_failure": "沿用基岩版水下门规则、忘记氧气或以血量硬换时间。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "initial_environment": {
+        "dimension": "overworld",
+        "water_corridor_length": 35,
+        "door_air_pocket_rule": "Java 1.21.6 only; actual block collision and breathing verified before use"
+      }
+    },
+    {
+      "id": "MC-71",
+      "level": 3,
+      "category": "红石与环境机制",
+      "title": "射击标靶开门",
+      "player_prompt": "用弓触发标靶控制的铁门，并穿过门到达出口。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "bow": 1,
+        "arrow": 6
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "target_block_redstone_iron_door",
+        "no_access_to_wiring",
+        "door_exit_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-71-1",
+          "expectation_zh": "Agent箭矢命中标靶后产生实际红石输出并令指定铁门打开。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-71-2",
+          "expectation_zh": "Agent在门打开期间通过门到达出口，没有拆门、挖墙或越界绕行。"
+        }
+      ],
+      "capabilities": [
+        "bow_charge_release",
+        "aim_ballistics",
+        "redstone_feedback",
+        "navigation"
+      ],
+      "common_failure": "射中了却没有及时通行，或把标靶当成只计伤害的实体。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/taking-inventory--bow"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-72",
+      "level": 2,
+      "category": "红石与环境机制",
+      "title": "漏斗方向与转运",
+      "player_prompt": "用两个漏斗把源箱中的32个小麦转入目标箱，不要手动搬运小麦。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "hopper": 2
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "source_chest_32_wheat",
+        "destination_chest",
+        "two_hopper_gap"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-72-1",
+          "expectation_zh": "目标箱最终有32个wheat，源箱为0。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-72-2",
+          "expectation_zh": "全部32次转移经指定漏斗网络，Agent不能直接从源箱取出小麦。"
+        }
+      ],
+      "capabilities": [
+        "hopper_orientation",
+        "place",
+        "container_network",
+        "verify"
+      ],
+      "common_failure": "漏斗朝向错误或把能站在上面当作能自动转运。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-73",
+      "level": 3,
+      "category": "红石与环境机制",
+      "title": "红石火把反相",
+      "player_prompt": "搭一个杠杆控制的反相灯：杠杆关时灯亮，杠杆开时灯灭。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "lever": 1,
+        "redstone_torch": 1,
+        "redstone_lamp": 1,
+        "redstone": 8,
+        "stone": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "redstone_plot",
+        "input_and_output_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-73-1",
+          "expectation_zh": "按冻结的关→开→关输入序列，灯实际输出亮→灭→亮。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-73-2",
+          "expectation_zh": "自动检查期间不得由Agent手动破坏、放置或切换灯来冒充电路输出。"
+        }
+      ],
+      "capabilities": [
+        "redstone_logic",
+        "place",
+        "verify"
+      ],
+      "common_failure": "只做同相开关，或口头解释对但实际电路不工作。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-74",
+      "level": 2,
+      "category": "红石与环境机制",
+      "title": "黏性活塞推拉",
+      "player_prompt": "让黏性活塞把指定石块推出一格，再拉回原位。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "sticky_piston": 1,
+        "lever": 1,
+        "stone": 3
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "piston_origin_and_target_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-74-1",
+          "expectation_zh": "同一标记石块实际随活塞伸出移动一格，随后缩回原位。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-74-2",
+          "expectation_zh": "不是通过Agent挖掉并重新放置石块完成位置变化。"
+        }
+      ],
+      "capabilities": [
+        "piston_orientation",
+        "redstone",
+        "world_state"
+      ],
+      "common_failure": "活塞朝反、以为普通活塞也会把方块拉回。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-75",
+      "level": 4,
+      "category": "红石与环境机制",
+      "title": "观察者甘蔗自动收获",
+      "player_prompt": "建一个观察者触发的甘蔗收获装置，收获至少2根上部甘蔗并保留根部。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "observer": 1,
+        "piston": 1,
+        "redstone": 8,
+        "hopper": 1,
+        "chest": 1,
+        "stone": 16
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "near_mature_sugar_cane",
+        "water_and_root_sugar_cane",
+        "growth_preflighted_snapshot"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-75-1",
+          "expectation_zh": "甘蔗长高的方块更新触发观察者与活塞，至少2个甘蔗掉落物自动进入收纳箱。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-75-2",
+          "expectation_zh": "根部甘蔗及其生长条件保留，Agent没有直接手动挖甘蔗冒充自动收获。"
+        }
+      ],
+      "capabilities": [
+        "observer",
+        "redstone",
+        "automatic_farm",
+        "hopper_orientation",
+        "verify"
+      ],
+      "common_failure": "在Java版用骨粉强行催甘蔗，或者割掉根部导致不可持续。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-76",
+      "level": 2,
+      "category": "红石与环境机制",
+      "title": "考古刷取而非挖掘",
+      "player_prompt": "从指定可疑沙中刷出藏品并收取，不能直接挖掉方块。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "brush": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "suspicious_sand_with_fixed_pottery_sherd",
+        "normal_sand_decoys"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-76-1",
+          "expectation_zh": "通过真实刷取进度完成一次藏品释放并收取指定陶片。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-76-2",
+          "expectation_zh": "目标方块未被直接挖掘破坏，未用普通沙子或其他陶片替换。"
+        }
+      ],
+      "capabilities": [
+        "archaeology",
+        "held_item_duration",
+        "block_identification"
+      ],
+      "common_failure": "拿镐挖掉可疑沙，或把刷子短点一次当成完成。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.20"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-77",
+      "level": 3,
+      "category": "红石与环境机制",
+      "title": "灵魂沙气泡电梯",
+      "player_prompt": "建一个8格高的灵魂沙上升水电梯，并乘它到达顶部。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "soul_sand": 1,
+        "kelp": 16,
+        "water_bucket": 1,
+        "glass": 40
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "elevator_frame_marker",
+        "renewable_water_pool",
+        "top_landing_platform"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-77-1",
+          "expectation_zh": "目标水柱8格形成正确向上的气泡柱，底部为灵魂沙；不能只留下流动水。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-77-2",
+          "expectation_zh": "Agent实际通过气泡柱上升至少7格并到达顶部平台，没有梯子或传送替代。"
+        }
+      ],
+      "capabilities": [
+        "source_water",
+        "kelp",
+        "bucket",
+        "place",
+        "swimming"
+      ],
+      "common_failure": "流动水不形成预期气泡柱，或误用岩浆块造成下拉。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-78",
+      "level": 2,
+      "category": "红石与环境机制",
+      "title": "皮革靴与粉雪",
+      "player_prompt": "穿过标记的粉雪路，取回终点物品，不能沉入危险区。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "leather_boots": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "powder_snow_path",
+        "goal_item",
+        "no_alternative_route"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-78-1",
+          "expectation_zh": "Agent穿皮革靴沿粉雪表面越过指定区域，取回目标物。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-78-2",
+          "expectation_zh": "没有陷入粉雪下方危险区、冻伤或绕路，不能用普通铁靴替代。"
+        }
+      ],
+      "capabilities": [
+        "equipment_mechanics",
+        "navigation",
+        "world_state"
+      ],
+      "common_failure": "认为越高级的护甲越适合所有地形。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-79",
+      "level": 4,
+      "category": "红石与环境机制",
+      "title": "幽匿振动与羊毛隔离",
+      "player_prompt": "取回房间箱子里的标记物，但不要触发指定幽匿感测体。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "white_wool": 16
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "sculk_sensor_guarded_chest",
+        "wool_placeable_buffer",
+        "sensor_preflighted_sensitivity"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-79-1",
+          "expectation_zh": "指定箱子目标物由Agent取出并带回入口。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-79-2",
+          "expectation_zh": "整个计分阶段没有Agent导致的感测体激活；不能破坏感测体或用管理员静音。"
+        }
+      ],
+      "capabilities": [
+        "sneaking",
+        "vibration_knowledge",
+        "wool_occlusion",
+        "place",
+        "chest"
+      ],
+      "common_failure": "只潜行走路，却在开箱时产生未隔离振动。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-80",
+      "level": 3,
+      "category": "红石与环境机制",
+      "title": "下界重生锚",
+      "player_prompt": "在下界设置一个可用重生点，不要引发爆炸。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "respawn_anchor": 1,
+        "glowstone": 2,
+        "white_bed": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "nether_safe_room",
+        "valid_anchor_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-80-1",
+          "expectation_zh": "重生锚位于指定安全处，至少有1级充能，玩家重生维度及坐标确实绑定该锚。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-80-2",
+          "expectation_zh": "没有尝试在下界睡床或引爆其他错误维度的重生设备；不要求实际死亡验证。"
+        }
+      ],
+      "capabilities": [
+        "dimension_knowledge",
+        "respawn_anchor",
+        "use_item",
+        "inspect_player_state"
+      ],
+      "common_failure": "在下界按主世界习惯放床并睡觉。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "initial_environment": {
+        "dimension": "the_nether"
+      }
+    },
+    {
+      "id": "MC-81",
+      "level": 3,
+      "category": "试炼与新战斗",
+      "title": "普通试炼刷怪笼",
+      "player_prompt": "激活并完成一次普通试炼刷怪笼挑战，收取它的奖励。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_sword": 1,
+        "shield": 1,
+        "bow": 1,
+        "arrow": 32,
+        "cooked_beef": 16,
+        "iron_helmet": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "normal_trial_spawner_fixed_mob_set",
+        "single_counted_player",
+        "safe_trial_arena"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-81-1",
+          "expectation_zh": "指定普通试炼刷怪笼经历激活、挑战完成和奖励释放状态，进入完成后的冷却。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-81-2",
+          "expectation_zh": "Agent收取本次释放的奖励；不要求随机奖励一定包含试炼钥匙。"
+        }
+      ],
+      "capabilities": [
+        "trial_spawner",
+        "mob_combat",
+        "combat_resource_management",
+        "verify"
+      ],
+      "common_failure": "以为插火把就完成试炼；把随机没出钥匙误判为任务失败。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-82",
+      "level": 2,
+      "category": "试炼与新战斗",
+      "title": "宝库与单人领取状态",
+      "player_prompt": "用试炼钥匙打开指定宝库并收取奖励，保留没有消耗的其他钥匙。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "trial_key": 2
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "normal_vault_not_rewarded_for_agent",
+        "fixed_reward_fixture"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-82-1",
+          "expectation_zh": "宝库对当前Agent发生一次有效解锁并释放奖励，Agent收取该次掉落。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-82-2",
+          "expectation_zh": "仅消耗1把钥匙，剩余1把仍在背包；不能把宝库当作普通箱子。"
+        }
+      ],
+      "capabilities": [
+        "vault",
+        "use_item",
+        "identity_tracking",
+        "item_collection"
+      ],
+      "common_failure": "无视当前玩家已经领取过奖励的状态，反复尝试开同一宝库。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-83",
+      "level": 4,
+      "category": "试炼与新战斗",
+      "title": "不祥之瓶与不祥试炼",
+      "player_prompt": "利用给定不祥之瓶开启并完成一次不祥试炼，收取奖励。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "ominous_bottle": 1,
+        "diamond_sword": 1,
+        "shield": 1,
+        "bow": 1,
+        "arrow": 64,
+        "cooked_beef": 24,
+        "iron_helmet": 1,
+        "iron_chestplate": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "trial_spawner_ominous_eligible",
+        "no_nearby_village",
+        "single_counted_player"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-83-1",
+          "expectation_zh": "有饮用不祥之瓶、获得相关效果并使指定刷怪笼进入不祥试炼状态的完整证据。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-83-2",
+          "expectation_zh": "挑战实际完成且奖励被收取；不以必须随机获得某种稀有奖励为判据。"
+        }
+      ],
+      "capabilities": [
+        "status_effects",
+        "ominous_trials",
+        "mob_combat",
+        "combat_resource_management"
+      ],
+      "common_failure": "把普通与不祥试炼混为一谈，或在错误场景误触袭击。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-84",
+      "level": 4,
+      "category": "试炼与新战斗",
+      "title": "风弹起跳与重锤重击",
+      "player_prompt": "借助风弹起跳，用重锤重击指定僵尸并安全落地。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "mace": 1,
+        "wind_charge": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "designated_zombie",
+        "flat_smash_arena"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-84-1",
+          "expectation_zh": "同一连续动作链中由Agent风弹产生向上位移，随后下落重锤命中被服务器判为重击。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-84-2",
+          "expectation_zh": "指定目标受到重击伤害，Agent没有摔落死亡；普通地面挥锤不计分。"
+        }
+      ],
+      "capabilities": [
+        "wind_charge_movement",
+        "fall_prediction",
+        "mace_smash",
+        "timed_attack"
+      ],
+      "common_failure": "只在地面挥重锤，或起跳后上升阶段就出手。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-85",
+      "level": 3,
+      "category": "试炼与新战斗",
+      "title": "旋风人的远程反制",
+      "player_prompt": "击败指定旋风人并收取旋风棒，注意选择有效攻击方式。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_sword": 1,
+        "shield": 1,
+        "bow": 1,
+        "arrow": 12,
+        "cooked_beef": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "designated_breeze",
+        "bounded_breeze_arena"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-85-1",
+          "expectation_zh": "指定breeze由Agent合法击杀，取得至少1个breeze_rod。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-85-2",
+          "expectation_zh": "成功造成伤害的攻击方式有记录；另外报告无效弓箭尝试数，不将弓箭命中反弹动画当作伤害。"
+        }
+      ],
+      "capabilities": [
+        "mob_specific_tactics",
+        "melee_cooldown",
+        "projectile_feedback"
+      ],
+      "common_failure": "持续对会反制普通弹射物的旋风人射箭。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-86",
+      "level": 3,
+      "category": "1.21.6天空与运输",
+      "title": "干枯恶魂水合",
+      "player_prompt": "把干枯恶魂恢复成小恶魂，并保证它存活。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "dried_ghast": 1,
+        "water_bucket": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "safe_hydration_plot",
+        "renewable_water_pool"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-86-1",
+          "expectation_zh": "初始无水合进度的同一干枯恶魂持续获得合法水合条件，最终生成幼年快乐恶魂。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-86-2",
+          "expectation_zh": "幼体存活；不能挖掉重放冒充保留进度，也不能用预置实体替换。"
+        }
+      ],
+      "capabilities": [
+        "waterlogging",
+        "long_wait_monitoring",
+        "entity_lifecycle"
+      ],
+      "common_failure": "反复挖掘重放导致水合进度重置。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6",
+        "https://www.minecraft.net/en-us/article/take-on-ghastastic-challenges"
+      ],
+      "budget": {
+        "wall_time_seconds": 2700,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "expected_passive_wait_seconds": 1200
+    },
+    {
+      "id": "MC-87",
+      "level": 3,
+      "category": "1.21.6天空与运输",
+      "title": "喂养小恶魂与制作挽具",
+      "player_prompt": "用雪球照料指定小恶魂，长大后制作并给它装备白色挽具。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "snowball": 64,
+        "leather": 3,
+        "glass": 2,
+        "white_wool": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "juvenile_happy_ghast",
+        "crafting_table",
+        "safe_ghast_enclosure"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-87-1",
+          "expectation_zh": "指定幼年happy_ghast有被雪球喂养的事件，最终成为存活成年个体。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-87-2",
+          "expectation_zh": "Agent真实制作white_harness并装备到该成年个体；不能使用鞍或凭空“繁殖”。"
+        }
+      ],
+      "capabilities": [
+        "entity_age",
+        "feed_snowballs",
+        "craft",
+        "harness_equip"
+      ],
+      "common_failure": "把幼体当成单独ghastling实体ID，或以为快乐恶魂可以像牛一样繁殖。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/de-de/article/happy-ghast",
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "expected_passive_wait_seconds": "growth may be accelerated through legal snowball feeding; log actual wait",
+      "target_entity": {
+        "type": "happy_ghast",
+        "juvenile": true
+      }
+    },
+    {
+      "id": "MC-88",
+      "level": 3,
+      "category": "1.21.6天空与运输",
+      "title": "快乐恶魂驾驶与安全离乘",
+      "player_prompt": "装备挽具，驾驶指定快乐恶魂依次通过三个空中标记，再回到安全平台离乘。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "white_harness": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_happy_ghast",
+        "three_air_waypoints",
+        "safe_return_platform"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-88-1",
+          "expectation_zh": "Agent位于可操控的驾驶位，按顺序通过三个三维航点；仅作为乘客不算。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-88-2",
+          "expectation_zh": "回到平台后安全离乘，无摔落死亡，快乐恶魂存活。"
+        }
+      ],
+      "capabilities": [
+        "harness_equip",
+        "mount_seat_selection",
+        "flight_control",
+        "safe_dismount"
+      ],
+      "common_failure": "占了乘客位却持续发移动命令，或高空直接跳下。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/de-de/article/happy-ghast"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "target_entity": {
+        "type": "happy_ghast",
+        "juvenile": false
+      }
+    },
+    {
+      "id": "MC-89",
+      "level": 3,
+      "category": "1.21.6天空与运输",
+      "title": "生物之间的拴绳与剪断",
+      "player_prompt": "把两头指定牛连成拴绳链，带到牛栏，再用剪刀解除拴绳。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "lead": 3,
+        "shears": 1,
+        "wheat": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "two_designated_cows",
+        "transport_route",
+        "destination_pen"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-89-1",
+          "expectation_zh": "至少一次真实建立牛与牛之间的拴绳关系，不能仅两头都分别拴在Agent身上。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-89-2",
+          "expectation_zh": "两头牛均存活并到达目标栏，最终使用剪刀解除相关连接并回收掉落拴绳。"
+        }
+      ],
+      "capabilities": [
+        "leash_graph",
+        "sneak_interact",
+        "animal_transport",
+        "shear_leash"
+      ],
+      "common_failure": "把旧版只能拴玩家或栅栏的操作逻辑直接照搬。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "additional_constraint": "Do not attack entities or intentionally snap leashes by teleporting. Crafting leads with the target-version five-string recipe is an optional paired variant, not required in the supplied-kit main task."
+    },
+    {
+      "id": "MC-90",
+      "level": 2,
+      "category": "1.21.6天空与运输",
+      "title": "可合成的鞍与剪下装备",
+      "player_prompt": "制作鞍，给指定已驯服马装备，骑到标记处后下马，用剪刀取回鞍。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "leather": 3,
+        "iron_ingot": 1,
+        "shears": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "tamed_unsaddled_horse",
+        "crafting_table",
+        "horse_route_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-90-1",
+          "expectation_zh": "本回合用新配方制作saddle，装备同一指定马并骑行到目标。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-90-2",
+          "expectation_zh": "下马后以剪刀取下鞍并收回背包，马存活且最终不带鞍。"
+        }
+      ],
+      "capabilities": [
+        "recipe_versioning",
+        "saddle_equip",
+        "horse_control",
+        "shear_equipment"
+      ],
+      "common_failure": "以为鞍仍然不能合成；蹲着或有骑手时反复尝试剪下。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-snapshot-25w20a",
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-91",
+      "level": 4,
+      "category": "稀有机制与综合游玩",
+      "title": "快乐恶魂吊运载牛船",
+      "player_prompt": "将指定牛装入船，用快乐恶魂吊运过峡谷，在对岸安全卸下牛和船。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "white_harness": 1,
+        "oak_boat": 1,
+        "lead": 3,
+        "shears": 1,
+        "wheat": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_happy_ghast",
+        "designated_cow",
+        "canyon_transport_route",
+        "unloading_platform"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-91-1",
+          "expectation_zh": "载牛船与快乐恶魂存在真实运输连接，并共同越过峡谷检查平面。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-91-2",
+          "expectation_zh": "牛存活且到达目标区，完成安全卸载；没有让牛落入峡谷或用传送替代。"
+        }
+      ],
+      "capabilities": [
+        "boat_loading",
+        "leash_graph",
+        "flight_control",
+        "cargo_unloading"
+      ],
+      "common_failure": "船还没连好就起飞、运输中断绳、或用错误离乘动作摔落。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/de-de/article/happy-ghast"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-92",
+      "level": 4,
+      "category": "稀有机制与综合游玩",
+      "title": "反弹恶魂火球取得Tears",
+      "player_prompt": "反弹指定恶魂发出的火球将其击杀，并收取Tears唱片。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_sword": 1,
+        "shield": 1,
+        "cooked_beef": 8
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "designated_hostile_ghast",
+        "safe_fireball_arena",
+        "no_other_loot_sources"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-92-1",
+          "expectation_zh": "指定恶魂死于被Agent反弹的火球，弹射物来源和反弹所有者可追踪。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-92-2",
+          "expectation_zh": "Agent收取本次掉落的music_disc_tears；其他武器直接击杀不算。"
+        }
+      ],
+      "capabilities": [
+        "projectile_parry",
+        "timed_attack",
+        "provenance_tracking",
+        "item_collection"
+      ],
+      "common_failure": "只用弓或剑击杀后期待获得特定唱片。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-93",
+      "level": 3,
+      "category": "稀有机制与综合游玩",
+      "title": "猪灵以物易物",
+      "player_prompt": "与指定普通成年猪灵完成3次以物易物，收取它给出的奖励，不要攻击它。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "gold_ingot": 3,
+        "golden_helmet": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_piglin",
+        "piglin_brute_decoy_at_safe_distance",
+        "nether_barter_area"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-93-1",
+          "expectation_zh": "3个金锭被正确交给成年普通猪灵，并完成3次实际以物易物。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-93-2",
+          "expectation_zh": "本次每次奖励都被收取，未攻击猪灵；不要求随机出现某一种奖励。"
+        }
+      ],
+      "capabilities": [
+        "mob_identification",
+        "barter",
+        "equip",
+        "reward_collection"
+      ],
+      "common_failure": "给金粒、喂给猪灵蛮兵、或金币丢出就离开。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-94",
+      "level": 3,
+      "category": "稀有机制与综合游玩",
+      "title": "犰狳鳞甲与狼铠",
+      "player_prompt": "刷取犰狳鳞甲，制作狼铠并给指定属于你的成年驯服狼穿上。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "brush": 2
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "armadillo",
+        "agent_owned_adult_tamed_wolf",
+        "crafting_table"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-94-1",
+          "expectation_zh": "本回合从犰狳刷取至少6个armadillo_scute并真实制作wolf_armor。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-94-2",
+          "expectation_zh": "狼铠装备到指定己方狼，狼与犰狳均存活，不能通过杀犰狳获取材料。"
+        }
+      ],
+      "capabilities": [
+        "brush_entity",
+        "durability_budget",
+        "craft",
+        "pet_owner_check",
+        "animal_equipment"
+      ],
+      "common_failure": "忘记刷子耐久、给非己方或幼年狼装备、攻击犰狳。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.20.5"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20-5"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "fixture_note": "Wolf Owner must be rebound to the actual episode Agent UUID during setup. Verify that two fresh brushes suffice for six brushing outputs on Java 1.21.6; otherwise adjust kit for all systems before freezing."
+    },
+    {
+      "id": "MC-95",
+      "level": 2,
+      "category": "稀有机制与综合游玩",
+      "title": "收纳袋容量与取物",
+      "player_prompt": "把四类各16个的材料装入一个收纳袋，木镐留在外面；再取出8支火把交付。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "bundle": 1,
+        "oak_log": 16,
+        "cobblestone": 16,
+        "sand": 16,
+        "torch": 16,
+        "wooden_pickaxe": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-95-1",
+          "expectation_zh": "曾有同一收纳袋同时装入16原木、16圆石、16沙、16火把，达到64个可64堆叠物品的容量。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-95-2",
+          "expectation_zh": "最终袋内保留前三类各16和8支火把，交付箱内有8支火把；木镐未被装入、丢弃或损坏。"
+        }
+      ],
+      "capabilities": [
+        "bundle_components",
+        "inventory_ui",
+        "capacity_reasoning",
+        "chest"
+      ],
+      "common_failure": "认为收纳袋能放64组物品，或忽略不可堆叠工具的容量占用。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.2"
+      },
+      "references": [
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-2"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-96",
+      "level": 3,
+      "category": "稀有机制与综合游玩",
+      "title": "雕刻南瓜与铁傀儡",
+      "player_prompt": "用给定材料造出一只铁傀儡，不能攻击它。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "iron_ingot": 36,
+        "pumpkin": 1,
+        "shears": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "crafting_table",
+        "valid_golem_build_plot"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-96-1",
+          "expectation_zh": "真实制作4个iron_block，并使用剪刀把南瓜雕刻成carved_pumpkin。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-96-2",
+          "expectation_zh": "通过本回合合法结构搭建生成新的player-created铁傀儡，不能使用初始个体充数；傀儡存活。"
+        }
+      ],
+      "capabilities": [
+        "carve_pumpkin",
+        "structure_activation",
+        "placement_order",
+        "entity_tracking"
+      ],
+      "common_failure": "南瓜没雕刻、头部放置顺序不对、或T形结构被周围方块挡住。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-97",
+      "level": 2,
+      "category": "稀有机制与综合游玩",
+      "title": "铜块涂蜡与刮除顺序",
+      "player_prompt": "给A号氧化铜涂蜡；把B号涂蜡氧化铜恢复到未涂蜡的锈蚀铜。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "honeycomb": 1,
+        "iron_axe": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "A_oxidized_copper",
+        "B_waxed_oxidized_copper"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-97-1",
+          "expectation_zh": "A最终为waxed_oxidized_copper。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-97-2",
+          "expectation_zh": "B最终为weathered_copper，并记录先去蜡再刮去一级氧化的两步真实斧头交互，不能挖掉重放。"
+        }
+      ],
+      "capabilities": [
+        "waxing",
+        "axe_scrape",
+        "block_state_transition"
+      ],
+      "common_failure": "认为一次斧头交互同时去蜡和去氧化，或者刮过头。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-98",
+      "level": 2,
+      "category": "稀有机制与综合游玩",
+      "title": "识别咬钩的钓鱼",
+      "player_prompt": "用鱼竿钓到至少3条鱼并保留，不要直接下水攻击鱼。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "fishing_rod": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "valid_open_fishing_water",
+        "no_fish_item_cache"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-98-1",
+          "expectation_zh": "至少3个属于cod、salmon、tropical_fish或pufferfish的物品来自本回合真实钓鱼收获。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-98-2",
+          "expectation_zh": "收竿时存在有效咬钩状态；没有直接击杀鱼、捡取预放鱼或只统计抛竿次数。"
+        }
+      ],
+      "capabilities": [
+        "fishing_bobber",
+        "bite_detection",
+        "timed_item_use",
+        "item_collection"
+      ],
+      "common_failure": "固定时间乱收竿，不识别浮漂的实际状态。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run"
+    },
+    {
+      "id": "MC-99",
+      "level": 4,
+      "category": "稀有机制与综合游玩",
+      "title": "防守反击与战备恢复",
+      "player_prompt": "先格挡骷髅至少2箭，再用预装弩击败它；随后近战击败僵尸，回营地处理食物并恢复。",
+      "track": "mechanic_execution",
+      "initial_inventory": {
+        "shield": 1,
+        "crossbow": 1,
+        "arrow": 12,
+        "iron_sword": 1,
+        "beef": 4,
+        "campfire": 1,
+        "iron_helmet": 1
+      },
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "designated_skeleton",
+        "designated_zombie",
+        "staged_combat_arena",
+        "camp_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-99-1",
+          "expectation_zh": "指定骷髅至少2次射击被盾牌真实格挡，随后死于Agent弩箭。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-99-2",
+          "expectation_zh": "指定僵尸死于Agent近战攻击，过程中没有攻击玩家。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-99-3",
+          "expectation_zh": "在营地用营火烤熟至少2份提供的牛肉，吃掉食物并最终生命值至少16、饥饿值至少18。"
+        }
+      ],
+      "capabilities": [
+        "shield_raise_lower",
+        "crossbow_load",
+        "melee_cooldown",
+        "campfire_cooking",
+        "healing_management"
+      ],
+      "common_failure": "只会一套攻击循环，战后不会恢复或把营火当普通熔炉。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "available_in_1.21.6"
+      },
+      "references": [],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "scoring_order": [
+        "shield_blocks",
+        "crossbow_kill",
+        "melee_kill",
+        "campfire_cook_and_recover"
+      ]
+    },
+    {
+      "id": "MC-100",
+      "level": 5,
+      "category": "稀有机制与综合游玩",
+      "title": "从零建立天空运输能力",
+      "player_prompt": "从空背包开始取得干枯恶魂，回主世界培育、制作挽具，并驾驶快乐恶魂完成标记空中运输路线。",
+      "track": "survival_chain_integration",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "survival_portal_resources",
+        "nether_fossil_with_dried_ghast",
+        "snow_and_water",
+        "cattle_and_sheep",
+        "safe_growth_plot",
+        "air_route_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-100-1",
+          "expectation_zh": "干枯恶魂来自本回合合法采集、合成或交易，而非初始赠予。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-100-2",
+          "expectation_zh": "水合、幼体成长、自制挽具装备形成可追溯完整链条；不得由管理员换成成年实体。"
+        },
+        {
+          "kind": "mechanic_check",
+          "check_id": "MC-100-3",
+          "expectation_zh": "Agent驾驶该成年快乐恶魂完成全部标记航点并安全返回。"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "portal",
+        "waterlogging",
+        "long_wait_monitoring",
+        "feed_snowballs",
+        "harness_equip",
+        "flight_control",
+        "persistent_planning"
+      ],
+      "common_failure": "拿到新物品就停工，等待期间丢失目标，或只完成培育却没有驾驶。",
+      "version_scope": {
+        "edition": "Java",
+        "version": "1.21.6",
+        "introduced": "1.21.6"
+      },
+      "references": [
+        "https://www.minecraft.net/de-de/article/happy-ghast",
+        "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6"
+      ],
+      "budget": {
+        "wall_time_seconds": 7200,
+        "model_calls": 450
+      },
+      "required_evidence": [
+        "server-side action and interaction events",
+        "before/after world, item-component and entity snapshots",
+        "agent identity and item/projectile provenance"
+      ],
+      "preflight_status": "not_run",
+      "expected_passive_wait_seconds": "hydration plus remaining juvenile growth; no time acceleration"
+    }
+  ],
+  "references": {
+    "fletching": "https://www.minecraft.net/en-us/article/block-month--fletching-table",
+    "bow": "https://www.minecraft.net/en-us/article/taking-inventory--bow",
+    "crossbow": "https://www.minecraft.net/en-us/article/taking-inventory--crossbow",
+    "shield": "https://www.minecraft.net/en-us/article/taking-inventory--shield",
+    "release": "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-6",
+    "trials": "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21",
+    "ghast": "https://www.minecraft.net/de-de/article/happy-ghast",
+    "ghast_growth": "https://www.minecraft.net/en-us/article/take-on-ghastastic-challenges",
+    "saddle": "https://www.minecraft.net/en-us/article/minecraft-snapshot-25w20a",
+    "campfire": "https://www.minecraft.net/fr-fr/article/taking-inventory--campfire",
+    "wolf": "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20-5",
+    "bundle": "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-2",
+    "archaeology": "https://www.minecraft.net/en-us/article/minecraft-java-edition-1-20",
+    "source_boundary": "Release notes are version anchors. Individual interaction rules not explicitly documented by them require Java 1.21.6 world preflight; snapshots and later feature articles cannot override the target release."
+  }
+}

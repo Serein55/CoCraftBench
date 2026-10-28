@@ -1,0 +1,50 @@
+{
+  "scope": "static specification validation only",
+  "date": "2026-10-28",
+  "task_count": 100,
+  "capability_count": 140,
+  "action_count": 42,
+  "predicate_count": 230,
+  "checks": {
+    "all_100_original_task_objects_preserved": true,
+    "all_success_predicates_bound": true,
+    "every_original_capability_mapped_once": true,
+    "all_action_references_resolve": true,
+    "schema_compilation": "passed",
+    "valid_examples": "passed",
+    "invalid_weapon_and_invented_api_rejected": true,
+    "prior_benchmark_files_byte_unchanged": true,
+    "tracked_agent_settings_and_library_files_unchanged": true
+  },
+  "protected_file_hashes": {
+    "mindcraft/settings.js": "080f790c4bcc3ca162daab89aaba2a94d1af4a7c84997c0bc76e31558461faff",
+    "mindcraft/andy.json": "74e93f6eb020bc79c6a4d9b3c9fc7374f9c25c74e25228a22fe669e725f12723",
+    "mindcraft/src/models/prompter.js": "86b8e26ea675ad505e1d199c7bcf9ae2779ec2350ea207b38b16bbb07a504db6",
+    "mindcraft/src/agent/library/skills.js": "e766b5837be4af0ebe392d0730eade5364f94560dfdf7d21fac105b33605c8dc",
+    "mindcraft/package.json": "079577c831334991d37a8eac6bdbce39a3e583bcc81909c81fafb462de8e58c2",
+    "benchmark-design/blueprints.json": "db1f5ee6a67600b218d26b359867b6caa5cde362bb815f49cea373cab2972041",
+    "benchmark-design/build-design.mjs": "cf1b0b97cefc0d07fc4c8dde75af106e284fa03331b4fea7bcbd054164663a74",
+    "benchmark-design/tasks-50.json": "7c6dc0820edb14146540edbbb781864bd315b895f21f85356872601438ba8f03",
+    "benchmark-design/validation.json": "d6b90b833ec63b7ec35a31e12f65ea4354dacff89a64f17673c161af0237e39d",
+    "benchmark-design/任务清单.md": "2782ebe8d753e8188bbb569f7b0dadccaaf4fc7ae1814cc140f9dbea404ca32a",
+    "benchmark-design/评测协议.md": "9b14c6abe3d9185dd1a1bc8ccd734abaad27a5071ba11d30c83311ef351fd4ce",
+    "benchmark-design/v0.2/100题总览.md": "43e02b7ffbf29eaa7ee150a7252c05a7c68204a0164f1ee3b62576cccd6e9f55",
+    "benchmark-design/v0.2/build-extended.mjs": "7842d380d6f88f571b735b0febde071f02ed592162b60b6270b835080bd99712",
+    "benchmark-design/v0.2/capability-coverage.json": "f330293ecf50a5ed412b3b07d5442a19b2a0b1dff78eca5713e9a76e37260972",
+    "benchmark-design/v0.2/tasks-100.json": "daef83f2d4040399330677ce1155f138cfc292671795d784255774fd5faccf0b",
+    "benchmark-design/v0.2/validation.json": "91b5c482caaf9bb1f83bccabf305ffd21d8fa99a1f57d4ca03ab69e810bce4f6",
+    "benchmark-design/v0.2/新增50项游玩专项.md": "18412b08002d1a9be3489aec943e5e65808fa2bb28115aa8aa4b9ffe6ddc717b",
+    "benchmark-design/v0.2/玩法评测与技能覆盖.md": "49b123c0f3d66a8cf799f92695fcd33817b9504ec2fa450d3a9f59f10f6027c6"
+  },
+  "not_run": [
+    "Agent integration",
+    "Minecraft connection",
+    "Model API call",
+    "GUI interaction",
+    "Combat or vehicle controller",
+    "World fixture preflight",
+    "Server grader",
+    "End-to-end task success"
+  ],
+  "no_capability_success_claims": true
+}

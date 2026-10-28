@@ -1,0 +1,28 @@
+{
+  "protocol_version": "0.3-spec",
+  "episode_id": "mc88-A-run01",
+  "session_id": "session-003",
+  "action_id": "action-003",
+  "name": "vehicle.drive",
+  "plan_id": "flight-01",
+  "plan_revision": 0,
+  "status": "failed",
+  "progress": 0,
+  "elapsed_ms": 0,
+  "elapsed_client_ticks": 0,
+  "local_postconditions": [],
+  "effects": [],
+  "evidence": [],
+  "error": {
+    "code": "UNSUPPORTED",
+    "message": "快乐恶魂三维驾驶控制器尚未通过1.21.6预验。",
+    "retryable": false
+  },
+  "cleanup": {
+    "owned_controls_released": true,
+    "owned_window_closed": true,
+    "held_item_use_released": true,
+    "lease_released": true
+  },
+  "checkpoint_id": null
+}

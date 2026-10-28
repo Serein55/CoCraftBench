@@ -1,0 +1,2466 @@
+{
+  "protocol": {
+    "version": "0.1-design",
+    "status": "Design only; no world pack, grader, task runner or empirical difficulty calibration is included.",
+    "game": {
+      "edition": "Java",
+      "version": "1.21.6",
+      "mode": "survival",
+      "difficulty": "normal",
+      "experiments": false
+    },
+    "independent_episodes": true,
+    "default_start": {
+      "inventory": {},
+      "equipment": {},
+      "xp_level": 0,
+      "health": 20,
+      "food": 20,
+      "time_of_day": 6000
+    },
+    "death_ends_episode": true,
+    "allow_agent_cheats": false,
+    "allow_human_intervention": false,
+    "invariants": [
+      "No attacks or damage to human players.",
+      "No modifications of protected player structures.",
+      "All target resources must be obtained within the episode through permitted survival actions."
+    ],
+    "npc_quality_requirements": [
+      "No raw executable commands in player-facing chat; report this quality metric separately from gameplay task success."
+    ],
+    "grading": {
+      "primary": "macro average strict success across 50 tasks",
+      "success": "all task predicates plus no actual gameplay constraint violation",
+      "failure_denominator": "Tool gaps and model failures remain failures; invalid map snapshots or confirmed service outages invalidate the episode and require a logged rerun.",
+      "partial": "MC-50 uses its explicit weighted milestones; other tasks use equal-weight terminal predicate progress, with per-item count ratios capped at 1. Partial score is diagnostic and cannot replace strict success."
+    },
+    "evaluation": {
+      "pilot": "one independently reset episode per task",
+      "main": "three frozen world instances per task, one rollout each; 150 episodes per agent",
+      "same_budget_across_agents": true,
+      "tiers": "Difficulty groups are provisional. Do not claim strict ordering of every task before human pilots."
+    },
+    "knowledge_access": "Agent may read normal provided tool docs; no unrestricted Internet, evaluator world state, hidden item caches or access to other tasks. If Wiki access is enabled, publish a separate assisted track.",
+    "seeds": {
+      "status": "Unselected: must select, preflight, hash and freeze world snapshots before collecting results.",
+      "instances": [
+        "A",
+        "B",
+        "C"
+      ]
+    },
+    "source_notes": [
+      "Item IDs and key crafting recipes checked against installed minecraft-data for Java 1.21.6.",
+      "Game rules concerning drops, enchantments, villagers and interactions still require world-level preflight.",
+      "JSON predicates are a proposed specification DSL, not native Mindcraft task JSON."
+    ]
+  },
+  "tasks": [
+    {
+      "id": "MC-01",
+      "level": 1,
+      "title": "原木与木工具",
+      "player_prompt": "采集至少10个橡木原木，并制作一把木斧和一把木镐。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "natural_log_collected",
+          "count": 10,
+          "item": "oak_log",
+          "source_region": "harvest_zone"
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "wooden_axe": 1,
+            "wooden_pickaxe": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "wooden_axe": 1,
+            "wooden_pickaxe": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "10个原木按本回合累计自然采集量计算；允许把它们消耗成工具，不要求最终剩余10个。"
+    },
+    {
+      "id": "MC-02",
+      "level": 1,
+      "title": "石镐与圆石",
+      "player_prompt": "制作一把石镐，并在背包中保留至少16个圆石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "stone_pickaxe": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "stone_pickaxe": 1,
+            "cobblestone": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-03",
+      "level": 1,
+      "title": "工作台和箱子",
+      "player_prompt": "制作工作台和箱子，并放到标记的两个位置。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "workstation_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "crafting_table": 1,
+            "chest": 1
+          }
+        },
+        {
+          "kind": "blocks_at_markers",
+          "blocks": {
+            "crafting_table": "table_marker",
+            "chest": "chest_marker"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-04",
+      "level": 1,
+      "title": "木炭生产",
+      "player_prompt": "制作并放置熔炉，烧出至少8个木炭并保留在背包中。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "furnace_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "furnace": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 8,
+          "item": "charcoal"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "charcoal": 8
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "furnace",
+          "anchor": "furnace_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-05",
+      "level": 1,
+      "title": "火把",
+      "player_prompt": "制作并保留32支火把。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "torch": 32
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "torch": 32
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-06",
+      "level": 1,
+      "title": "石工具组合",
+      "player_prompt": "制作一把石斧、一把石剑和一把石锹，保留这三件物品。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "stone_axe": 1,
+            "stone_sword": 1,
+            "stone_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "stone_axe": 1,
+            "stone_sword": 1,
+            "stone_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-07",
+      "level": 1,
+      "title": "玻璃",
+      "player_prompt": "采集沙子并烧出8块玻璃，保留玻璃。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 8,
+          "item": "glass"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "glass": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-08",
+      "level": 1,
+      "title": "白床",
+      "player_prompt": "制作一张白色床并放在床位标记处。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "white_sheep",
+        "bed_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "white_bed": 1
+          }
+        },
+        {
+          "kind": "functional_bed_at_marker",
+          "item": "white_bed",
+          "anchor": "bed_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "本题允许击杀普通动物；与MC-15的禁止伤羊条件不同。"
+    },
+    {
+      "id": "MC-09",
+      "level": 1,
+      "title": "熟牛肉",
+      "player_prompt": "获得并保留8块熟牛肉。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "cattle"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "cooked_beef": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "mob_combat",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": "允许熔炉烹饪或其他正常生存途径；地图没有现成熟食。"
+    },
+    {
+      "id": "MC-10",
+      "level": 1,
+      "title": "分类采集与交付",
+      "player_prompt": "各采集16个泥土、沙子、圆石，存入标记的交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "dirt_bank",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "dirt": 16,
+            "sand": 16,
+            "cobblestone": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "chest"
+      ],
+      "budget": {
+        "wall_time_seconds": 600,
+        "model_calls": 30
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-11",
+      "level": 2,
+      "title": "煤矿开采",
+      "player_prompt": "采集并保留16个煤炭，不能用木炭替代。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "coal": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-12",
+      "level": 2,
+      "title": "铁锭",
+      "player_prompt": "采掘铁矿并冶炼，获得16个铁锭。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "smelt_output",
+          "count": 16,
+          "item": "iron_ingot"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_ingot": 16
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-13",
+      "level": 2,
+      "title": "铁工具组合",
+      "player_prompt": "制作铁镐、铁斧、铁锹各一把，并保留。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_pickaxe": 1,
+            "iron_axe": 1,
+            "iron_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_pickaxe": 1,
+            "iron_axe": 1,
+            "iron_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-14",
+      "level": 2,
+      "title": "剑盾装备",
+      "player_prompt": "制作铁剑和盾牌，把铁剑拿在主手、盾牌放在副手。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_sword": 1,
+            "shield": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "main_hand": "iron_sword",
+            "off_hand": "shield"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-15",
+      "level": 2,
+      "title": "无伤剪羊毛",
+      "player_prompt": "制作剪刀，获得8块白色羊毛，不能伤害或杀死羊。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore",
+        "white_sheep"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "shears": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "sheared_wool_collected",
+          "count": 8,
+          "item": "white_wool"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "white_wool": 8
+          }
+        },
+        {
+          "kind": "no_damage_to_species",
+          "species": "sheep"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-16",
+      "level": 2,
+      "title": "水桶与熔岩桶",
+      "player_prompt": "制作两个桶，分别装水和熔岩，保留一桶水和一桶熔岩。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "iron_ore",
+        "coal_ore",
+        "water_pool",
+        "safe_lava_pool"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bucket": 2
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "water_bucket": 1,
+            "lava_bucket": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-17",
+      "level": 2,
+      "title": "小型麦田",
+      "player_prompt": "按地面标记建一个中心有水、周围8格耕地均种有小麦的3×3麦田。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "grass_and_seeds",
+        "water_pool",
+        "iron_ore",
+        "coal_ore",
+        "stone_outcrop",
+        "farm_3x3_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_3x3",
+          "anchor": "farm_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": "小麦处于任意生长阶段均可；不要求等待成熟。"
+    },
+    {
+      "id": "MC-18",
+      "level": 2,
+      "title": "面包",
+      "player_prompt": "收获成熟小麦，制作并保留8个面包。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "mature_wheat_24"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "bread": 8
+          }
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "craft"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-19",
+      "level": 2,
+      "title": "短途补给",
+      "player_prompt": "准备16块熟牛肉、32支火把和一桶水，全部放入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "cattle",
+        "water_pool",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "cooked_beef": 16,
+            "torch": 32,
+            "water_bucket": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "chest",
+        "use_item"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-20",
+      "level": 2,
+      "title": "铁轨与矿车",
+      "player_prompt": "制作16个普通铁轨和一辆矿车，保留它们。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "rail": 16,
+            "minecart": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "rail": 16,
+            "minecart": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt"
+      ],
+      "budget": {
+        "wall_time_seconds": 1200,
+        "model_calls": 60
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-21",
+      "level": 3,
+      "title": "全套铁甲",
+      "player_prompt": "从零制作一整套铁甲并穿上：头盔、胸甲、护腿、靴子。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": "铁甲四件的配方合计24个铁锭，不含采矿工具和燃料成本。"
+    },
+    {
+      "id": "MC-22",
+      "level": 3,
+      "title": "铁装战斗套装",
+      "player_prompt": "制作并穿上全套铁甲，另外保留铁镐，并装备铁剑和盾牌。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1,
+            "iron_pickaxe": 1,
+            "iron_sword": 1,
+            "shield": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots",
+            "main_hand": "iron_sword",
+            "off_hand": "shield"
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "iron_pickaxe": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-23",
+      "level": 3,
+      "title": "首批钻石",
+      "player_prompt": "采掘钻石矿，获得并保留3颗钻石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "mined_drop_collected",
+          "count": 3,
+          "item": "diamond",
+          "source_blocks": [
+            "diamond_ore",
+            "deepslate_diamond_ore"
+          ]
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond": 3
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-24",
+      "level": 3,
+      "title": "钻石镐与黑曜石",
+      "player_prompt": "制作钻石镐，并用它采集4块黑曜石，保留钻石镐和黑曜石。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "mined_drop_collected",
+          "count": 4,
+          "item": "obsidian",
+          "tool": "diamond_pickaxe"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "obsidian": 4
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-25",
+      "level": 3,
+      "title": "时钟与指南针",
+      "player_prompt": "制作并保留一个时钟和一个指南针。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "gold_ore",
+        "redstone_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "clock": 1,
+            "compass": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "clock": 1,
+            "compass": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-26",
+      "level": 3,
+      "title": "蛋糕",
+      "player_prompt": "制作一个蛋糕并放在蛋糕标记处，不要吃掉它。补给箱只提供一个鸡蛋。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "cattle",
+        "mature_wheat_3",
+        "sugar_cane",
+        "egg_cache_one",
+        "cake_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "cake": 1
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "cake",
+          "anchor": "cake_marker",
+          "states": {
+            "bites": "0"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "use_item",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": "固定提供一个鸡蛋仅用于消除等鸡下蛋的随机等待；其他原料自行获取。"
+    },
+    {
+      "id": "MC-27",
+      "level": 3,
+      "title": "繁殖牛羊",
+      "player_prompt": "分别繁殖一对成年牛和一对成年羊，得到一只小牛和一只小羊。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "adult_cow_pair",
+        "adult_sheep_pair",
+        "mature_wheat_8"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "breeding_birth",
+          "count": 1,
+          "species": "cow",
+          "caused_by": "agent"
+        },
+        {
+          "kind": "event_count",
+          "event": "breeding_birth",
+          "count": 1,
+          "species": "sheep",
+          "caused_by": "agent"
+        },
+        {
+          "kind": "offspring_alive",
+          "species": [
+            "cow",
+            "sheep"
+          ]
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "use_item",
+        "entity_tracking"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-28",
+      "level": 3,
+      "title": "收获与复种",
+      "player_prompt": "收获标记农田的24株成熟小麦，制作8个面包，并在原来的24格重新播种。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "mature_wheat_24",
+        "farm_24_marker",
+        "grass_and_seeds"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "crop_harvest",
+          "count": 24,
+          "item": "wheat",
+          "source_region": "farm_24"
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "bread": 8
+          }
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "farm",
+        "craft",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-29",
+      "level": 3,
+      "title": "基础小木屋",
+      "player_prompt": "在标记处建一座5×5橡木屋：三格内高、完整地板和屋顶、南侧一扇门、四扇单格玻璃窗。按提供的尺寸图施工。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "house_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_empty",
+          "anchor": "house_origin",
+          "exact": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "blueprint",
+        "place",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-30",
+      "level": 3,
+      "title": "可居住木屋",
+      "player_prompt": "建造同样的5×5橡木屋，按家具位置图放好白床、工作台、熔炉和箱子，门到室内中央要能走通。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "sand_bank",
+        "white_sheep",
+        "house_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "walkable_path",
+          "from": "outside_door",
+          "to": "house_center",
+          "clearance_height": 2
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "blueprint",
+        "place",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 2100,
+        "model_calls": 100
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-31",
+      "level": 4,
+      "title": "附魔台",
+      "player_prompt": "从零制作一个附魔台，并放在标记处。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool",
+        "sugar_cane",
+        "cattle",
+        "enchant_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "enchanting_table": 1
+          }
+        },
+        {
+          "kind": "block_at_marker",
+          "item": "enchanting_table",
+          "anchor": "enchant_marker"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "use_item",
+        "tool_selection",
+        "place"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-32",
+      "level": 4,
+      "title": "钻石工具组合",
+      "player_prompt": "制作钻石镐、钻石斧、钻石锹各一把，保留它们。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "diamond_axe": 1,
+            "diamond_shovel": 1
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "diamond_axe": 1,
+            "diamond_shovel": 1
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "tool_selection"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-33",
+      "level": 4,
+      "title": "下界往返",
+      "player_prompt": "自行建造并点燃下界传送门，进入下界，再返回主世界基地。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "safe_lava_pool",
+        "gravel",
+        "nether_safe_spawn"
+      ],
+      "success_all": [
+        {
+          "kind": "agent_built_portal",
+          "activated": true
+        },
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "event_count",
+          "event": "dimension_return",
+          "count": 1,
+          "from": "the_nether",
+          "to": "overworld"
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "portal",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-34",
+      "level": 4,
+      "title": "下界资源运输",
+      "player_prompt": "进入下界，采集16个下界石英和16个荧石粉，返回基地并存入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "nether_safe_spawn",
+        "nether_quartz_ore",
+        "accessible_glowstone",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "quartz": 16,
+            "glowstone_dust": 16
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "portal",
+        "navigation",
+        "chest"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-35",
+      "level": 4,
+      "title": "抗火药水",
+      "player_prompt": "从零酿造3瓶普通抗火药水并带回基地，不要改成喷溅药水。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "magma_cube_area",
+        "sand_bank",
+        "water_pool",
+        "base"
+      ],
+      "success_all": [
+        {
+          "kind": "potion_inventory",
+          "item": "potion",
+          "potion": "fire_resistance",
+          "count": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "brewing_output",
+          "count": 3,
+          "potion": "fire_resistance"
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "portal",
+        "mob_combat",
+        "brew",
+        "craft",
+        "smelt",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-36",
+      "level": 4,
+      "title": "末影之眼",
+      "player_prompt": "获得并保留4个末影之眼。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "enderman_encounters"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "ender_eye": 4
+          }
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "ender_eye": 4
+          }
+        }
+      ],
+      "capabilities": [
+        "portal",
+        "mob_combat",
+        "craft",
+        "navigation"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-37",
+      "level": 4,
+      "title": "可运行铁路",
+      "player_prompt": "沿标记直线铺设16个普通铁轨和6个动力铁轨，正确供电，并乘矿车连续移动至少16格。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "gold_ore",
+        "redstone_ore",
+        "rail_corridor_22"
+      ],
+      "success_all": [
+        {
+          "kind": "rail_corridor",
+          "length": 22,
+          "ordinary_rails": 16,
+          "powered_rails": 6,
+          "powered": true
+        },
+        {
+          "kind": "event_count",
+          "event": "agent_minecart_ride",
+          "count": 1,
+          "continuous_distance_min": 16
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "redstone",
+        "place",
+        "vehicle"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-38",
+      "level": 4,
+      "title": "跨河木桥",
+      "player_prompt": "沿标记建一座长12格、净通行宽2格的橡木桥，通道外两侧各有连续栏杆，并从桥上走到对岸。不能填平河道。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "river_gap_12",
+        "bridge_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "bridge_12x2",
+          "anchor": "bridge_origin",
+          "exact": true
+        },
+        {
+          "kind": "water_region_unchanged",
+          "region": "river_below_bridge"
+        },
+        {
+          "kind": "event_count",
+          "event": "crossed_bridge",
+          "count": 1,
+          "on_bridge": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "navigation",
+        "constraint"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-39",
+      "level": 4,
+      "title": "农牧小基地",
+      "player_prompt": "建24格带水小麦田，以及带栅栏门的牛栏，把两头指定成年牛完整带入并关好门。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "water_pool",
+        "grass_and_seeds",
+        "mature_wheat_8",
+        "adult_cow_pair",
+        "farm_and_pen_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "cattle_pen",
+          "anchor": "pen_origin",
+          "exact": true
+        },
+        {
+          "kind": "designated_entities_inside",
+          "species": "cow",
+          "count": 2,
+          "region": "cattle_pen",
+          "alive": true
+        },
+        {
+          "kind": "gate_closed",
+          "anchor": "pen_gate"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "farm",
+        "place",
+        "animal_luring",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-40",
+      "level": 4,
+      "title": "完整远征装备",
+      "player_prompt": "制作并穿上全套铁甲，准备钻石镐、水桶、16个面包和64支火把；把四类补给存入基地交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore",
+        "water_pool",
+        "mature_wheat_48",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1,
+            "diamond_pickaxe": 1,
+            "bread": 16,
+            "torch": 64
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "delivery_chest",
+          "items": {
+            "diamond_pickaxe": 1,
+            "water_bucket": 1,
+            "bread": 16,
+            "torch": 64
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip",
+        "farm",
+        "chest",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 3600,
+        "model_calls": 160
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-41",
+      "level": 5,
+      "title": "全套钻石甲",
+      "player_prompt": "从零制作并穿上全套钻石甲，不接受直接购买或拾取成品护甲。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore",
+        "diamond_ore_large"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_helmet": 1,
+            "diamond_chestplate": 1,
+            "diamond_leggings": 1,
+            "diamond_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "diamond_helmet",
+            "torso": "diamond_chestplate",
+            "legs": "diamond_leggings",
+            "feet": "diamond_boots"
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "equip",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-42",
+      "level": 5,
+      "title": "烈焰棒远征",
+      "player_prompt": "自行进入下界，获取6根烈焰棒，带回主世界基地。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "blaze_spawner",
+        "base"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "mob_drop_collected",
+          "count": 6,
+          "item": "blaze_rod",
+          "species": "blaze"
+        },
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "blaze_rod": 6
+          }
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "mob_combat",
+        "navigation",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-43",
+      "level": 5,
+      "title": "下界作物迁移",
+      "player_prompt": "自行去下界取得下界疣和灵魂沙，在主世界基地的8个标记格铺灵魂沙并种满下界疣。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "soul_sand",
+        "wart_farm_marker"
+      ],
+      "success_all": [
+        {
+          "kind": "event_count",
+          "event": "dimension_enter",
+          "count": 1,
+          "dimension": "the_nether"
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "wart_farm_8",
+          "anchor": "wart_farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "near_anchor",
+          "anchor": "base",
+          "dimension": "overworld",
+          "distance_max": 4
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "navigation",
+        "farm",
+        "place",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-44",
+      "level": 5,
+      "title": "延长力量药水",
+      "player_prompt": "从零酿造3瓶持续8分钟的力量药水，并放入交付箱。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "portal_route_resources",
+        "fortress_route",
+        "nether_wart",
+        "sand_bank",
+        "water_pool",
+        "redstone_ore",
+        "delivery_chest"
+      ],
+      "success_all": [
+        {
+          "kind": "potion_container",
+          "anchor": "delivery_chest",
+          "item": "potion",
+          "potion": "long_strength",
+          "count": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "brewing_output",
+          "count": 3,
+          "potion": "long_strength"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "portal",
+        "mob_combat",
+        "brew",
+        "craft",
+        "chest",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-45",
+      "level": 5,
+      "title": "完整高级附魔流程",
+      "player_prompt": "从零建造附魔台和15个有效书架，制作钻石镐，获得经验并对它完成一次30级档位附魔。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "enchanting_route_resources",
+        "lapis_ore",
+        "repeatable_xp_source",
+        "enchant_area"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "enchanting_table": 1,
+            "bookshelf": 15,
+            "diamond_pickaxe": 1
+          }
+        },
+        {
+          "kind": "effective_bookshelves",
+          "anchor": "enchant_marker",
+          "count_min": 15
+        },
+        {
+          "kind": "event_count",
+          "event": "enchanting_table_use",
+          "count": 1,
+          "option_required_level": 30,
+          "item": "diamond_pickaxe"
+        },
+        {
+          "kind": "enchanted_inventory_item",
+          "item": "diamond_pickaxe",
+          "any_non_curse": true
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "enchant",
+        "place",
+        "xp_management",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "不指定抽中的附魔种类；避免把特定附魔的随机出现率当成规划能力。"
+    },
+    {
+      "id": "MC-46",
+      "level": 5,
+      "title": "交易与铁砧附魔",
+      "player_prompt": "制作钻石镐，通过村民获得耐久III附魔书，制作铁砧并把附魔加到钻石镐上。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore_large",
+        "diamond_ore",
+        "sugar_cane",
+        "cattle",
+        "fletcher_fixed",
+        "librarian_unbreaking_iii_fixed",
+        "repeatable_xp_source"
+      ],
+      "success_all": [
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "diamond_pickaxe": 1,
+            "anvil": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "villager_trade",
+          "count": 1,
+          "acquired_enchantment": "unbreaking",
+          "level": 3
+        },
+        {
+          "kind": "event_count",
+          "event": "anvil_apply_enchantment",
+          "count": 1,
+          "item": "diamond_pickaxe",
+          "enchantment": "unbreaking",
+          "level": 3
+        },
+        {
+          "kind": "enchanted_inventory_item",
+          "item": "diamond_pickaxe",
+          "enchantments": {
+            "unbreaking": 3
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "trade",
+        "anvil",
+        "xp_management",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-47",
+      "level": 5,
+      "title": "自给生存基地",
+      "player_prompt": "建立完整木屋、24格小麦田、两头牛的封闭牛栏；穿上自制铁甲，并在屋内箱子储存16个面包和32支火把。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_farm_pen_resources",
+        "iron_ore",
+        "coal_ore",
+        "adult_cow_pair",
+        "base_markers"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "farm_24_replanted",
+          "anchor": "farm_origin",
+          "exact": true
+        },
+        {
+          "kind": "blueprint_match",
+          "blueprint": "cattle_pen",
+          "anchor": "pen_origin",
+          "exact": true
+        },
+        {
+          "kind": "designated_entities_inside",
+          "species": "cow",
+          "count": 2,
+          "region": "cattle_pen",
+          "alive": true
+        },
+        {
+          "kind": "crafted_output_at_least",
+          "items": {
+            "iron_helmet": 1,
+            "iron_chestplate": 1,
+            "iron_leggings": 1,
+            "iron_boots": 1
+          }
+        },
+        {
+          "kind": "equipped",
+          "slots": {
+            "head": "iron_helmet",
+            "torso": "iron_chestplate",
+            "legs": "iron_leggings",
+            "feet": "iron_boots"
+          }
+        },
+        {
+          "kind": "container_at_least",
+          "anchor": "house_chest",
+          "items": {
+            "bread": 16,
+            "torch": 32
+          }
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "farm",
+        "animal_luring",
+        "blueprint",
+        "place",
+        "planning",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": ""
+    },
+    {
+      "id": "MC-48",
+      "level": 5,
+      "title": "中断后继续建房",
+      "player_prompt": "收集材料建造带家具的5×5木屋。期间会发生一次机器人程序重启，请恢复后继续完成，不要重复领取任务或拆掉已完成部分。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_resources",
+        "house_marker",
+        "restart_hook"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_furnished",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "event_count",
+          "event": "benchmark_restart",
+          "count": 1
+        },
+        {
+          "kind": "post_restart_progress",
+          "new_correct_cells_min": 10
+        },
+        {
+          "kind": "protected_region_unchanged",
+          "region": "completed_floor_at_restart"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "persistent_memory",
+        "recovery",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "仅主办方触发一次重启；世界和背包保留，内存对话清空，所有方案允许保留自己的本地任务文件。",
+      "intervention": {
+        "trigger": "25 floor cells and at least 5 correct wall cells placed",
+        "action": "restart_agent_once",
+        "preserve": [
+          "world",
+          "inventory",
+          "agent_persistent_files"
+        ],
+        "clear": [
+          "process_memory",
+          "in_memory_chat"
+        ],
+        "downtime_seconds": 10
+      }
+    },
+    {
+      "id": "MC-49",
+      "level": 5,
+      "title": "施工中修改需求",
+      "player_prompt": "先建一座5×5橡木屋，门朝南，按家具图放好白床、工作台、熔炉和箱子。收到后续修改时按新要求继续，保留已完成且符合新要求的结构。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "house_resources",
+        "stone_outcrop",
+        "house_marker",
+        "change_request_hook"
+      ],
+      "success_all": [
+        {
+          "kind": "blueprint_match",
+          "blueprint": "house_5x5_revised",
+          "anchor": "house_origin",
+          "exact": true
+        },
+        {
+          "kind": "event_count",
+          "event": "benchmark_change_request",
+          "count": 1
+        },
+        {
+          "kind": "protected_region_unchanged",
+          "region": "completed_floor_at_change"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "blueprint",
+        "place",
+        "dialogue",
+        "replanning",
+        "constraint",
+        "verify"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "固定后续消息：屋顶改用圆石，保留其余结构和家具。",
+      "intervention": {
+        "trigger": "25 floor cells and at least 5 correct wall cells placed",
+        "action": "send_user_message_once",
+        "message": "屋顶改用圆石，保留其余结构和家具。",
+        "final_blueprint": "house_5x5_revised"
+      }
+    },
+    {
+      "id": "MC-50",
+      "level": 5,
+      "title": "草方块：完整生存路线",
+      "player_prompt": "从空背包开始，获得1个可以放进背包的草方块。不得使用管理员赠予、现成附魔工具或携带草方块的末影人路线。",
+      "initial_inventory": {},
+      "initial_equipment": {},
+      "initial_xp_level": 0,
+      "fixture_requirements": [
+        "oak_forest_large",
+        "stone_outcrop",
+        "coal_ore",
+        "iron_ore_large",
+        "sugar_cane",
+        "cattle",
+        "grass_patch",
+        "fletcher_fixed",
+        "librarian_silk_touch_fixed",
+        "repeatable_xp_source"
+      ],
+      "success_all": [
+        {
+          "kind": "inventory_at_least",
+          "items": {
+            "grass_block": 1
+          }
+        },
+        {
+          "kind": "event_count",
+          "event": "silk_touch_block_drop_collected",
+          "count": 1,
+          "source_block": "grass_block",
+          "item": "grass_block",
+          "tool_enchantment": "silk_touch",
+          "source_region": "grass_patch"
+        }
+      ],
+      "capabilities": [
+        "gather",
+        "craft",
+        "smelt",
+        "trade",
+        "anvil",
+        "enchant",
+        "xp_management",
+        "tool_selection",
+        "planning"
+      ],
+      "budget": {
+        "wall_time_seconds": 5400,
+        "model_calls": 240
+      },
+      "note": "主路线固定可用的村民交易，不要求反复刷村民职业或等待附魔随机出现。普通挖掘得到泥土不算成功，种子、草和地表变绿也不算。",
+      "diagnostic_variants": [
+        {
+          "id": "silk_tool_supplied",
+          "official_score": false,
+          "change": "Provide a fresh iron_shovel with Silk Touch I; keep the grass patch.",
+          "purpose": "Separate correct block harvesting from progression and resource planning."
+        },
+        {
+          "id": "silk_book_supplied",
+          "official_score": false,
+          "change": "Provide Silk Touch I book only; no tool, anvil, iron, emeralds or XP.",
+          "purpose": "Separate trading from anvil, XP and tool selection."
+        }
+      ],
+      "progress_milestones": [
+        {
+          "weight": 0.15,
+          "predicate": {
+            "kind": "ever_owned_tool_tier",
+            "tier_min": "stone"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "ever_owned_silk_touch_source",
+            "allow": [
+              "enchanted_book",
+              "enchanted_tool"
+            ]
+          }
+        },
+        {
+          "weight": 0.25,
+          "predicate": {
+            "kind": "ever_owned_usable_silk_touch_tool"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "event_count",
+            "event": "silk_touch_block_drop_collected",
+            "count": 1,
+            "source_block": "grass_block",
+            "item": "grass_block"
+          }
+        },
+        {
+          "weight": 0.2,
+          "predicate": {
+            "kind": "inventory_at_least",
+            "items": {
+              "grass_block": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

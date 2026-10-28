@@ -1,0 +1,11 @@
+# 本地缓存与运行时（体积过大，不入库）
+.npm-cache/
+runtime/
+
+# 上游 Mindcraft 克隆（含独立 .git 与 node_modules，请从官方仓库获取）
+mindcraft/
+
+# 密钥
+keys.json
+.env
+.env.*

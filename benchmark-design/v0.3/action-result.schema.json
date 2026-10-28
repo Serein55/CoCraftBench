@@ -1,0 +1,360 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MC-NPC proposed agent-visible action result v0.3",
+  "type": "object",
+  "properties": {
+    "protocol_version": {
+      "const": "0.3-spec"
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "enum": [
+        "observe.snapshot",
+        "navigation.goto",
+        "navigation.control",
+        "gather.collect",
+        "block.break",
+        "block.place",
+        "inventory.equip",
+        "inventory.transfer",
+        "inventory.bundle",
+        "item.use",
+        "craft.make",
+        "furnace.smelt",
+        "brewing.brew",
+        "workstation.process",
+        "villager.trade",
+        "villager.manage_job",
+        "enchanting.enchant",
+        "anvil.process",
+        "combat.melee",
+        "combat.shoot",
+        "combat.shield",
+        "combat.parry",
+        "movement.clutch",
+        "vehicle.mount",
+        "vehicle.drive",
+        "vehicle.dismount",
+        "animal.interact",
+        "animal.leash",
+        "world.portal",
+        "world.redstone",
+        "world.archaeology",
+        "trial.interact",
+        "world.wait_until",
+        "world.fish",
+        "build.blueprint",
+        "plan.checkpoint",
+        "plan.resume",
+        "plan.revise",
+        "verify.local",
+        "npc.say",
+        "action.status",
+        "action.cancel"
+      ]
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "plan_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "accepted",
+        "running",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "indeterminate"
+      ]
+    },
+    "progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "elapsed_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "elapsed_client_ticks": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "local_postconditions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "predicate": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false",
+              "unknown"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "predicate",
+          "value",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1
+          },
+          "before": {},
+          "after": {},
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "subject",
+          "before",
+          "after",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "client",
+              "controller_estimate"
+            ]
+          },
+          "observation_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "server_tick": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "client_tick": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "data": {},
+          "uncertainty": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "estimated",
+              "unknown"
+            ]
+          }
+        },
+        "required": [
+          "evidence_id",
+          "channel",
+          "observation_type",
+          "server_tick",
+          "client_tick",
+          "data",
+          "uncertainty"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "INVALID_ARGUMENT",
+                "VERSION_MISMATCH",
+                "UNSUPPORTED",
+                "UNOBSERVABLE",
+                "STALE_TARGET",
+                "STALE_REVISION",
+                "PRECONDITION_FAILED",
+                "PROTECTED_TARGET",
+                "PLAYER_DAMAGE_RISK",
+                "NO_PATH",
+                "MISSING_ITEM",
+                "INVENTORY_FULL",
+                "WINDOW_MISMATCH",
+                "BUSY",
+                "TIMEOUT",
+                "POSTCONDITION_FAILED",
+                "CONNECTION_LOST",
+                "INDETERMINATE",
+                "CANCELLED"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryable": {
+              "type": "boolean"
+            },
+            "retry_after_ms": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cleanup": {
+      "type": "object",
+      "properties": {
+        "owned_controls_released": {
+          "type": "boolean"
+        },
+        "owned_window_closed": {
+          "type": "boolean"
+        },
+        "held_item_use_released": {
+          "type": "boolean"
+        },
+        "lease_released": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "owned_controls_released",
+        "owned_window_closed",
+        "held_item_use_released",
+        "lease_released"
+      ],
+      "additionalProperties": false
+    },
+    "checkpoint_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "protocol_version",
+    "episode_id",
+    "session_id",
+    "action_id",
+    "name",
+    "plan_id",
+    "plan_revision",
+    "status",
+    "progress",
+    "elapsed_ms",
+    "elapsed_client_ticks",
+    "local_postconditions",
+    "effects",
+    "evidence",
+    "error",
+    "cleanup",
+    "checkpoint_id"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "failed",
+              "indeterminate"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "succeeded"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}

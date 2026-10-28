@@ -1,0 +1,1352 @@
+{
+  "original_50_preserved": true,
+  "categories": [
+    {
+      "category": "工作站与村民",
+      "tasks": [
+        "MC-51",
+        "MC-52",
+        "MC-53",
+        "MC-54",
+        "MC-55",
+        "MC-56",
+        "MC-57",
+        "MC-58",
+        "MC-59",
+        "MC-60"
+      ]
+    },
+    {
+      "category": "弓弩盾牌与战斗",
+      "tasks": [
+        "MC-61",
+        "MC-62",
+        "MC-63",
+        "MC-64",
+        "MC-65",
+        "MC-66",
+        "MC-67",
+        "MC-68",
+        "MC-69",
+        "MC-70"
+      ]
+    },
+    {
+      "category": "红石与环境机制",
+      "tasks": [
+        "MC-71",
+        "MC-72",
+        "MC-73",
+        "MC-74",
+        "MC-75",
+        "MC-76",
+        "MC-77",
+        "MC-78",
+        "MC-79",
+        "MC-80"
+      ]
+    },
+    {
+      "category": "试炼与新战斗",
+      "tasks": [
+        "MC-81",
+        "MC-82",
+        "MC-83",
+        "MC-84",
+        "MC-85"
+      ]
+    },
+    {
+      "category": "1.21.6天空与运输",
+      "tasks": [
+        "MC-86",
+        "MC-87",
+        "MC-88",
+        "MC-89",
+        "MC-90"
+      ]
+    },
+    {
+      "category": "稀有机制与综合游玩",
+      "tasks": [
+        "MC-91",
+        "MC-92",
+        "MC-93",
+        "MC-94",
+        "MC-95",
+        "MC-96",
+        "MC-97",
+        "MC-98",
+        "MC-99",
+        "MC-100"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "skill": "aim_ballistics",
+      "tasks": [
+        "MC-61",
+        "MC-63",
+        "MC-71"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "aim_leading",
+      "tasks": [
+        "MC-62"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "air_management",
+      "tasks": [
+        "MC-70"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "animal_equipment",
+      "tasks": [
+        "MC-94"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "animal_luring",
+      "tasks": [
+        "MC-39",
+        "MC-47",
+        "MC-69"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "animal_transport",
+      "tasks": [
+        "MC-89"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "anvil",
+      "tasks": [
+        "MC-46",
+        "MC-50",
+        "MC-57"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "archaeology",
+      "tasks": [
+        "MC-76"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "attack_timing",
+      "tasks": [
+        "MC-66"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "automatic_farm",
+      "tasks": [
+        "MC-75"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "axe_scrape",
+      "tasks": [
+        "MC-97"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "barter",
+      "tasks": [
+        "MC-93"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "bite_detection",
+      "tasks": [
+        "MC-98"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "block_identification",
+      "tasks": [
+        "MC-76"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "block_state_transition",
+      "tasks": [
+        "MC-97"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "blueprint",
+      "tasks": [
+        "MC-29",
+        "MC-30",
+        "MC-38",
+        "MC-47",
+        "MC-48",
+        "MC-49"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "boat_loading",
+      "tasks": [
+        "MC-91"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "boat_mount_control",
+      "tasks": [
+        "MC-69"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "bow_charge_release",
+      "tasks": [
+        "MC-61",
+        "MC-62",
+        "MC-71"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "brew",
+      "tasks": [
+        "MC-35",
+        "MC-44"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "brush_entity",
+      "tasks": [
+        "MC-94"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "bucket",
+      "tasks": [
+        "MC-68",
+        "MC-77"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "bundle_components",
+      "tasks": [
+        "MC-95"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "campfire_cooking",
+      "tasks": [
+        "MC-99"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "capacity_reasoning",
+      "tasks": [
+        "MC-95"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "cargo_unloading",
+      "tasks": [
+        "MC-91"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "cartography",
+      "tasks": [
+        "MC-55"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "carve_pumpkin",
+      "tasks": [
+        "MC-96"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "chest",
+      "tasks": [
+        "MC-10",
+        "MC-19",
+        "MC-34",
+        "MC-40",
+        "MC-44",
+        "MC-70",
+        "MC-79",
+        "MC-95"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "combat_resource_management",
+      "tasks": [
+        "MC-81",
+        "MC-83"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "combat_telemetry",
+      "tasks": [
+        "MC-64",
+        "MC-66",
+        "MC-67"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "composter",
+      "tasks": [
+        "MC-60"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "constraint",
+      "tasks": [
+        "MC-38",
+        "MC-49",
+        "MC-53"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "container_network",
+      "tasks": [
+        "MC-72"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "craft",
+      "tasks": [
+        "MC-01",
+        "MC-02",
+        "MC-03",
+        "MC-04",
+        "MC-05",
+        "MC-06",
+        "MC-07",
+        "MC-08",
+        "MC-09",
+        "MC-10",
+        "MC-11",
+        "MC-12",
+        "MC-13",
+        "MC-14",
+        "MC-15",
+        "MC-16",
+        "MC-17",
+        "MC-18",
+        "MC-19",
+        "MC-20",
+        "MC-21",
+        "MC-22",
+        "MC-23",
+        "MC-24",
+        "MC-25",
+        "MC-26",
+        "MC-28",
+        "MC-29",
+        "MC-30",
+        "MC-31",
+        "MC-32",
+        "MC-33",
+        "MC-34",
+        "MC-35",
+        "MC-36",
+        "MC-37",
+        "MC-38",
+        "MC-39",
+        "MC-40",
+        "MC-41",
+        "MC-44",
+        "MC-45",
+        "MC-46",
+        "MC-47",
+        "MC-48",
+        "MC-49",
+        "MC-50",
+        "MC-51",
+        "MC-87",
+        "MC-94",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "crafter",
+      "tasks": [
+        "MC-59"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "crossbow_load",
+      "tasks": [
+        "MC-63",
+        "MC-99"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "dialogue",
+      "tasks": [
+        "MC-49"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "dimension_knowledge",
+      "tasks": [
+        "MC-80"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "door_air_pocket_java",
+      "tasks": [
+        "MC-70"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "durability_budget",
+      "tasks": [
+        "MC-94"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "enchant",
+      "tasks": [
+        "MC-45",
+        "MC-50"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "entity_age",
+      "tasks": [
+        "MC-87"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "entity_lifecycle",
+      "tasks": [
+        "MC-86"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "entity_tracking",
+      "tasks": [
+        "MC-27",
+        "MC-53",
+        "MC-69",
+        "MC-96"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "equip",
+      "tasks": [
+        "MC-14",
+        "MC-21",
+        "MC-22",
+        "MC-40",
+        "MC-41",
+        "MC-93"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "equipment_mechanics",
+      "tasks": [
+        "MC-78"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "face_threat",
+      "tasks": [
+        "MC-64",
+        "MC-65"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "fall_prediction",
+      "tasks": [
+        "MC-68",
+        "MC-84"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "farm",
+      "tasks": [
+        "MC-17",
+        "MC-18",
+        "MC-26",
+        "MC-27",
+        "MC-28",
+        "MC-39",
+        "MC-40",
+        "MC-43",
+        "MC-47"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "feed_snowballs",
+      "tasks": [
+        "MC-87",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "fishing_bobber",
+      "tasks": [
+        "MC-98"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "flight_control",
+      "tasks": [
+        "MC-88",
+        "MC-91",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "gather",
+      "tasks": [
+        "MC-01",
+        "MC-02",
+        "MC-03",
+        "MC-04",
+        "MC-05",
+        "MC-06",
+        "MC-07",
+        "MC-08",
+        "MC-09",
+        "MC-10",
+        "MC-11",
+        "MC-12",
+        "MC-13",
+        "MC-14",
+        "MC-15",
+        "MC-16",
+        "MC-17",
+        "MC-19",
+        "MC-20",
+        "MC-21",
+        "MC-22",
+        "MC-23",
+        "MC-24",
+        "MC-25",
+        "MC-26",
+        "MC-29",
+        "MC-30",
+        "MC-31",
+        "MC-32",
+        "MC-33",
+        "MC-34",
+        "MC-37",
+        "MC-38",
+        "MC-39",
+        "MC-40",
+        "MC-41",
+        "MC-42",
+        "MC-43",
+        "MC-44",
+        "MC-45",
+        "MC-46",
+        "MC-47",
+        "MC-48",
+        "MC-49",
+        "MC-50",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "grindstone",
+      "tasks": [
+        "MC-54"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "harness_equip",
+      "tasks": [
+        "MC-87",
+        "MC-88",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "healing_management",
+      "tasks": [
+        "MC-99"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "held_item_duration",
+      "tasks": [
+        "MC-76"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "hopper_orientation",
+      "tasks": [
+        "MC-72",
+        "MC-75"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "horse_control",
+      "tasks": [
+        "MC-90"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "hotbar_switch",
+      "tasks": [
+        "MC-63"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "identity_tracking",
+      "tasks": [
+        "MC-82"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inspect_components",
+      "tasks": [
+        "MC-63"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inspect_durability",
+      "tasks": [
+        "MC-57"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inspect_enchantments",
+      "tasks": [
+        "MC-54"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inspect_map",
+      "tasks": [
+        "MC-55"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inspect_player_state",
+      "tasks": [
+        "MC-80"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "inventory_ui",
+      "tasks": [
+        "MC-95"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "item_collection",
+      "tasks": [
+        "MC-59",
+        "MC-82",
+        "MC-92",
+        "MC-98"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "jump_fall_timing",
+      "tasks": [
+        "MC-67"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "kelp",
+      "tasks": [
+        "MC-77"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "leash_graph",
+      "tasks": [
+        "MC-89",
+        "MC-91"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "long_wait_monitoring",
+      "tasks": [
+        "MC-86",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "mace_smash",
+      "tasks": [
+        "MC-84"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "melee_cooldown",
+      "tasks": [
+        "MC-66",
+        "MC-67",
+        "MC-85",
+        "MC-99"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "mob_combat",
+      "tasks": [
+        "MC-09",
+        "MC-35",
+        "MC-36",
+        "MC-42",
+        "MC-44",
+        "MC-81",
+        "MC-83"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "mob_identification",
+      "tasks": [
+        "MC-93"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "mob_specific_tactics",
+      "tasks": [
+        "MC-85"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "mount_seat_selection",
+      "tasks": [
+        "MC-88"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "navigation",
+      "tasks": [
+        "MC-33",
+        "MC-34",
+        "MC-35",
+        "MC-36",
+        "MC-38",
+        "MC-42",
+        "MC-43",
+        "MC-71",
+        "MC-78"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "observer",
+      "tasks": [
+        "MC-75"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "offhand",
+      "tasks": [
+        "MC-64"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "ominous_trials",
+      "tasks": [
+        "MC-83"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "persistent_memory",
+      "tasks": [
+        "MC-48"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "persistent_planning",
+      "tasks": [
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "pet_owner_check",
+      "tasks": [
+        "MC-94"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "piston_orientation",
+      "tasks": [
+        "MC-74"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "place",
+      "tasks": [
+        "MC-03",
+        "MC-04",
+        "MC-08",
+        "MC-17",
+        "MC-26",
+        "MC-28",
+        "MC-29",
+        "MC-30",
+        "MC-31",
+        "MC-37",
+        "MC-38",
+        "MC-39",
+        "MC-43",
+        "MC-45",
+        "MC-47",
+        "MC-48",
+        "MC-49",
+        "MC-52",
+        "MC-72",
+        "MC-73",
+        "MC-77",
+        "MC-79"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "placement_order",
+      "tasks": [
+        "MC-96"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "planning",
+      "tasks": [
+        "MC-40",
+        "MC-41",
+        "MC-42",
+        "MC-43",
+        "MC-44",
+        "MC-45",
+        "MC-46",
+        "MC-47",
+        "MC-50"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "portal",
+      "tasks": [
+        "MC-33",
+        "MC-34",
+        "MC-35",
+        "MC-36",
+        "MC-42",
+        "MC-43",
+        "MC-44",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "projectile_feedback",
+      "tasks": [
+        "MC-85"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "projectile_parry",
+      "tasks": [
+        "MC-92"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "projectile_tracking",
+      "tasks": [
+        "MC-61",
+        "MC-62"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "provenance_tracking",
+      "tasks": [
+        "MC-92"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "reactive_control",
+      "tasks": [
+        "MC-65"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "recipe_versioning",
+      "tasks": [
+        "MC-58",
+        "MC-90"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "recovery",
+      "tasks": [
+        "MC-48"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "redstone",
+      "tasks": [
+        "MC-37",
+        "MC-59",
+        "MC-74",
+        "MC-75"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "redstone_feedback",
+      "tasks": [
+        "MC-71"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "redstone_logic",
+      "tasks": [
+        "MC-73"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "replanning",
+      "tasks": [
+        "MC-49"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "resource_planning",
+      "tasks": [
+        "MC-56"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "respawn_anchor",
+      "tasks": [
+        "MC-80"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "reward_collection",
+      "tasks": [
+        "MC-93"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "saddle_equip",
+      "tasks": [
+        "MC-90"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "safe_dismount",
+      "tasks": [
+        "MC-88"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "shear_equipment",
+      "tasks": [
+        "MC-90"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "shear_leash",
+      "tasks": [
+        "MC-89"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "shield_raise_lower",
+      "tasks": [
+        "MC-64",
+        "MC-65",
+        "MC-99"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "slot_enable_disable",
+      "tasks": [
+        "MC-59"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "smelt",
+      "tasks": [
+        "MC-04",
+        "MC-05",
+        "MC-07",
+        "MC-09",
+        "MC-12",
+        "MC-13",
+        "MC-14",
+        "MC-15",
+        "MC-16",
+        "MC-17",
+        "MC-19",
+        "MC-20",
+        "MC-21",
+        "MC-22",
+        "MC-23",
+        "MC-24",
+        "MC-25",
+        "MC-26",
+        "MC-29",
+        "MC-30",
+        "MC-31",
+        "MC-32",
+        "MC-33",
+        "MC-34",
+        "MC-35",
+        "MC-37",
+        "MC-40",
+        "MC-41",
+        "MC-45",
+        "MC-46",
+        "MC-47",
+        "MC-50"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "smithing",
+      "tasks": [
+        "MC-58"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "sneak_interact",
+      "tasks": [
+        "MC-89"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "sneaking",
+      "tasks": [
+        "MC-79"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "source_water",
+      "tasks": [
+        "MC-77"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "status_effects",
+      "tasks": [
+        "MC-83"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "stonecutter",
+      "tasks": [
+        "MC-56"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "structure_activation",
+      "tasks": [
+        "MC-96"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "swimming",
+      "tasks": [
+        "MC-70",
+        "MC-77"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "timed_attack",
+      "tasks": [
+        "MC-84",
+        "MC-92"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "timed_item_use",
+      "tasks": [
+        "MC-68",
+        "MC-98"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "tool_selection",
+      "tasks": [
+        "MC-11",
+        "MC-23",
+        "MC-24",
+        "MC-25",
+        "MC-31",
+        "MC-32",
+        "MC-50"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "trade",
+      "tasks": [
+        "MC-46",
+        "MC-50",
+        "MC-52"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "trial_spawner",
+      "tasks": [
+        "MC-81"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "use_item",
+      "tasks": [
+        "MC-15",
+        "MC-16",
+        "MC-19",
+        "MC-24",
+        "MC-26",
+        "MC-27",
+        "MC-31",
+        "MC-60",
+        "MC-80",
+        "MC-82"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "vault",
+      "tasks": [
+        "MC-82"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "vehicle",
+      "tasks": [
+        "MC-37"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "vehicle_dismount",
+      "tasks": [
+        "MC-69"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "verify",
+      "tasks": [
+        "MC-29",
+        "MC-30",
+        "MC-39",
+        "MC-47",
+        "MC-48",
+        "MC-49",
+        "MC-72",
+        "MC-73",
+        "MC-75",
+        "MC-81"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "vibration_knowledge",
+      "tasks": [
+        "MC-79"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "villager_job_site",
+      "tasks": [
+        "MC-52",
+        "MC-53"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "waterlogging",
+      "tasks": [
+        "MC-86",
+        "MC-100"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "waxing",
+      "tasks": [
+        "MC-97"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "wind_charge_movement",
+      "tasks": [
+        "MC-84"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "window_slots",
+      "tasks": [
+        "MC-54",
+        "MC-55",
+        "MC-56",
+        "MC-57",
+        "MC-58"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "wool_occlusion",
+      "tasks": [
+        "MC-79"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "workstation_selection",
+      "tasks": [
+        "MC-51"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "world_state",
+      "tasks": [
+        "MC-60",
+        "MC-68",
+        "MC-74",
+        "MC-78"
+      ],
+      "implementation_status": "not_audited"
+    },
+    {
+      "skill": "xp_management",
+      "tasks": [
+        "MC-45",
+        "MC-46",
+        "MC-50",
+        "MC-57"
+      ],
+      "implementation_status": "not_audited"
+    }
+  ]
+}
