@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$taskProfile = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'mindcraft\andy.json') -Raw | ConvertFrom-Json
+$taskProfile = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\mindcraft\andy.json') -Raw | ConvertFrom-Json
 $taskKeyName = switch ($taskProfile.model.api) {
     'openai' { 'OPENAI_API_KEY' }
     'deepseek' { 'DEEPSEEK_API_KEY' }
@@ -10,7 +10,7 @@ $taskKeyPtr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($taskSecureK
 try {
     $taskApiKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($taskKeyPtr).Trim()
     if ([string]::IsNullOrWhiteSpace($taskApiKey)) { throw 'API key cannot be empty.' }
-    $taskKeyFile = Join-Path $PSScriptRoot 'mindcraft\keys.json'
+    $taskKeyFile = Join-Path $PSScriptRoot '..\mindcraft\keys.json'
     $taskKeys = @{}
     if (Test-Path -LiteralPath $taskKeyFile) {
         $taskExisting = Get-Content -LiteralPath $taskKeyFile -Raw | ConvertFrom-Json
